@@ -7,3 +7,5 @@ def circle(radius):
 def square(length):
     return length*length
 
+
+print("area 모듈 이름 : {}".format(__name__))

@@ -1,7 +1,3 @@
-from area import circle, square
+import shapes
 
-def square(length):
-    return 4*length
-
-
-print(square(3))
+shapes.area.circle(3)

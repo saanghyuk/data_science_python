@@ -11,15 +11,17 @@
 
 - 모듈을 가져오는 방법
 
-  - 특정 함수만 필요할 때 - 이렇게 쓰면, 그냥 circle이라고 쓰면 됨. 
+  - 특정 함수만 필요할 때 - 이렇게 쓰면, 그냥 circle이라고 쓰면 됨.
 
   ```python
   from are import circle, square
   
-  import area as ar - 새로운 이름으로 사용 가능함. 
-  
+  ```
+
+from shapes import area as ar - 새로운 이름으로 사용 가능함. 
+
   from area import square as sq 
-  
+
   from area import *  - 모든 함수 다 가져옴
   ```
 
@@ -51,3 +53,357 @@
   즉, dir은 네임스페이스를 리턴해 주는 것. 
 
 - 파이썬에서는 똑같은 이름으로 여러 개의 함수가 정의되어 있을 때, 가장 나중에 정의된 함수를 쓰게 됨. 
+
+
+
+#### 자주 쓰는 모듈
+
+- Math - `math`는 기본적인 수학 모듈입니다. 여러 수학적인 함수를 제공해 줍니다.
+
+  ```python
+  import math
+  
+  # 코사인 함수 (모든 삼각함수는 라디안을 사용합니다)
+  print(math.cos(0))
+  
+  # 로그 함수
+  print(math.log10(100))
+  ```
+
+- random - random 모듈은 랜덤 한 숫자를 생성하기 위한 다양한 함수들을 제공해 줍니다.
+
+  ```python
+  import random
+  
+  # 랜덤한 정수 1 <= N <= 20 
+  print(random.randint(1, 20))
+  
+  # 랜덤한 소수 0 <= x <= 1
+  print(random.uniform(0, 1))
+  ```
+
+- datetime - `datetime` 모듈은 날짜와 시간을 다루기 위한 다양한 '클래스'를 갖추고 있습니다. 클래스의 개념을 잘 모르셔도 이 모듈을 사용하는 데에는 문제없습니다.
+
+  ```python
+  import datetime 
+  
+  # 현재 시간과 날짜
+  today = datetime.datetime.now()
+  print(today)
+  
+  # 출력값을 "요일, 월 일 연도"로 포매팅
+  print(today.strftime("%A, %B %dth %Y"))
+  
+  # 특정 시간과 날짜
+  pi_day = datetime.datetime(2020, 3, 14, 13, 6, 15)
+  print(pi_day)
+  
+  # 두 datetime의 차이
+  print(today - pi_day)
+  ```
+
+- os - OS는 Operating System, 즉 운영체제의 약자입니다. `os` 모듈을 통해서 파이썬으로 운영체제를 조작하거나 운영체제에 대한 정보를 가져올 수 있습니다.
+
+  ```python
+  import os
+  
+  # 현재 어떤 계정으로 로그인 돼있는지 확인
+  print(os.getlogin())
+  
+  # 현재 파일의 디렉토리 확인 
+  print(os.getcwd())
+  
+  # 현재 프로세스 ID 확인 
+  print(os.getpid())
+  ```
+
+- os.path - `os.path` 모듈은 파일 경로를 다룰 때 쓰입니다.
+
+  ```python
+  import os.path
+  
+  # 프로젝트 디렉토리 경로 '/Users/codeit/PycharmProjects/standard_modules'
+  # 현재 파일 경로 '/Users/codeit/PycharmProjects/standard_modules/main.py'
+  
+  # 주어진 경로를 절대 경로로
+  print(os.path.abspath('..'))
+  
+  # 주어진 경로를 현재 디렉토리를 기준으로 한 상대 경로로
+  print(os.path.relpath('/Users/codeit/PycharmProjects'))
+  
+  # 주어진 경로들을 병합
+  print(os.path.join('/Users/codeit/PycharmProjects', 'standard_modules'))
+  ```
+
+  
+
+- Re - 프로그래밍에서 Regular Expression (RegEx, re, 한국어로는 정규 표현식)은 특정한 규칙/패턴을 가진 문자열을 표현하는 데 사용됩니다.
+
+  ```python
+  import re 
+  
+  # 알파벳으로 구성된 단어들만 매칭
+  pattern = re.compile('^[A-Za-z]+$')
+  print(pattern.match('I'))
+  print(pattern.match('love'))
+  print(pattern.match('python3'))
+  
+  print()
+  
+  # 숫자가 포함된 단어들만 매칭
+  pattern = re.compile('.*\d+')
+  print(pattern.match('I'))
+  print(pattern.match('love'))
+  print(pattern.match('python3'))
+  
+  ```
+
+- pickle - `pickle` 을 사용하면 파이썬 오브젝트(객체)를 바이트(byte) 형식으로 바꿔서 파일에 저장할 수 있고 저장된 오브젝트를 읽어올 수도 있습니다.
+
+  ```python
+  import pickle
+  
+  # 딕셔너리 오브젝트
+  obj = {'my': 'dictionary'}  
+  
+  # obj를 filename.pickle 파일에 저장
+  with open('filename.pickle', 'wb') as f:
+      pickle.dump(obj, f)
+  
+  # filename.pickle에 있는 오브젝트를 읽어옴 
+  with open('filename.pickle', 'rb') as f:
+      obj = pickle.load(f)
+  
+  print(obj)
+  ```
+
+- json - `json` 모듈은 `pickle`과 비슷하지만 오브젝트를 JSON 형식으로 바꿔줍니다. JSON 형식에 맞는 데이터 (기본 데이터 타입들, 리스트, 딕셔너리)만 바꿀 수 있습니다.
+
+  ```python
+  import json
+  
+  # 딕셔너리 오브젝트
+  obj = {'my': 'dictionary'}  
+  
+  # obj를 filename.json 파일에 저장
+  with open('filename.json', 'w') as f:
+      json.dump(obj, f)
+  
+  # filename.json에 있는 오브젝트를 읽어옴 
+  with open('filename.json', 'r') as f:
+      obj = json.load(f)
+  
+  print(obj)
+  ```
+
+- copy - `copy` 모듈은 파이썬 오브젝트를 복사할 때 쓰입니다.
+
+  ```python
+  import copy
+  
+  # '=' 연산자는 실제로 리스트를 복사하지 않음
+  # 리스트를 복사하려면 슬라이싱을 사용하거나 copy.copy() 함수를 사용해야 함
+  a = [1, 2, 3] 
+  b = a
+  c = a[:]
+  d = copy.copy(a)
+  a[0] = 4
+  print(a, b, c, d)
+  
+  # 하지만 오브젝트 안에 오브젝트가 있는 경우 copy.copy() 함수는 가장 바깥에 있는 오브젝트만 복사함 
+  # 오브젝트를 재귀적으로 복사하려면 copy.deepcopy() 함수를 사용해야 함
+  a = [[1,2,3], [4,5,6], [7,8,9]]
+  b = copy.copy(a)
+  c = copy.deepcopy(a)
+  a[0][0] = 4
+  print(a, b, c)
+  ```
+
+- Sqlite3 - `sqlite3` 모듈을 통해 파이썬에서 SQLite 데이터베이스를 사용할 수 있습니다.
+
+  ```python
+  import sqlite3
+  
+  # 데이터베이스 연결
+  conn = sqlite3.connect('example.db')
+  
+  # SQL 문 실행 
+  c = conn.cursor()
+  c.execute('''SELECT ... FROM ... WHERE ... ''')
+  
+  # 가져온 데이터를 파이썬에서 사용
+  rows = c.fetchall()
+  for row in rows:
+      print(row)
+  
+  # 연결 종료
+  conn.close()
+  ```
+
+  
+
+
+
+### 파이썬의 모듈 검색 경로
+
+- 파이썬은 모듈을 찾기 위해 특정 경로들을 검색함. 위 경로에 해당되는 곳들을 검색하게 됨. 
+
+  ```python
+  import sys
+  
+  print(sys.path)
+  ```
+
+- sys에 직접 내가 경로 추가하는 것도 가능함. 
+
+  1. sys.path에  append()로 경로 추가 가능. 
+
+     첫 번째 방법은 `sys.path`에 새로운 경로를 직접 추가하는 것입니다. `sys.path`는 결국 리스트이기 때문에 `.append()` 함수를 써서 쉽게 새로운 경로를 추가할 수 있습니다.
+
+     예를 들어 `sys.path`에 바탕 화면의 경로를 추가하고 싶다면 아래와 같은 코드를 추가해 주면 됩니다.
+
+     run.py
+
+     ```python
+     import sys
+     sys.path.append('/Users/codeit/Desktop') # macOS
+     sys.path.append('C:\\Users\\codeit\\Desktop') # Windows
+     
+     ```
+
+     
+
+  2. 영구적으로 경로 추가도 가능함(위 방법은 해당 파일에서 한번 찾아 보는 것). 
+
+     `sys.path`에 어떤 경로를 `append()`해 주면 프로그램이 종료되면 그 경로는 `sys.path`에서 사라집니다. 그 경로에 있는 모듈을 쓰고 싶으면 매번 `append()`를 해 줘야 합니다.
+
+     그럼 어떤 경로를 영구적으로 `sys.path`에 추가하려면 어떻게 해야 할까요?
+
+     PyCharm의 설정 (Windows: File → Settings, macOS: PyCharm → Preferences)으로 가서 Project 탭 안에 있는 Project Interpreter를 클릭해 줍니다.
+
+     > 1. PyCharm의 설정 (Windows: File → Settings, macOS: PyCharm → Preferences)으로 가서 Project 탭 안에 있는 Project Interpreter를 클릭해 줍니다.
+     >
+     > 2. 그리고 톱니바퀴 버튼을 누른 후 Show All 옵션을 클릭해 줍니다.
+     > 3. 그런 다음에 파일 경로 아이콘을 클릭해 줍니다.
+     > 4. 그리고 + 아이콘을 누른 후 원하는 경로를 추가해 줍니다 (밑에 사진은 바탕 화면의 경로를 추가해 줍니다).
+     > 5. Ok를 눌러줍니다. 
+     >
+     > 
+
+     
+
+### 스크립트와 모듈
+
+- 파이썬에서는 프로그램을 작동시키는 코드를 담은 실행 용도의 파일을 스크립트 라고 함.   Run.py
+
+- 모듈은 프로그램에 필요한 변수들이나 함수들을 정의해 놓은 파일. 보통 직접 사용하지 않고, 다른 파일에서 가져다 씀. 
+
+- 파이썬은 모듈을 임포트 하면, 그 모듈에 있는 모든 함수가 실행됨. 즉, area 모듈에 테스트를 위한 print 로그를 몇번 찍어 놓은 것이, run.py에서 가져와 쓰려고 해도 실행된다는 것. 만약 모듈을 가지고 오고는 싶은데 이상한 코드는 가지고 오고 싶지 않다면?
+
+- __name__은 모듈의 이름을 정해져 있음. 
+
+  직접 실행하면, 그 파일의 **name**은 **main**으로 설정 됨. 
+
+  파일을 다른 곳에서 실행하면 name은 원래 모듈의 이름으로 설정됨. 
+
+  ```python
+  run.py
+  
+  import area
+  
+  ## 결과
+  ## area 모듈 이름 : area
+  ```
+
+  ```python
+  area.py
+  
+  print("area 모듈 이름 : {}".format(__name__))
+  
+  ## 결과
+  ## area 모듈 이름 : __main__
+  ```
+
+  
+
+- area가 직접 실행될떄만 실행시키고 싶은 테스트 코드가 있다면?
+
+  ```python
+  if __name__ == "__main__":
+  	print("test")
+  ```
+
+
+
+
+- main을 만들고 오버라이딩 하면서 활용가능함. 
+
+  ```python
+  PI = 3.14
+  
+  # 원의 면적을 구해 주는 함수
+  def circle(radius):
+        return PI * radius * radius  
+  
+  # 정사각형의 면적을 구해 주는 함수
+  def square(length):
+        return length * length
+  
+  # 함수들을 테스팅 하는 메인 함수
+  def main():
+        # circle 함수 테스트
+        print(circle(2) == 12.56)
+        print(circle(5) == 78.4)
+  
+        # square 함수 테스트
+        print(square(2) == 4)
+        print(square(5) == 25)
+  
+  if __name__ == '__main__':
+      main()
+  ```
+
+  이렇게 `main` 함수를 사용하면 파일에서 프로그램을 **작동시키는 코드가 어디 있는지 쉽게 알 수 있기 때문에 코드의 가독성이 올라갑니다**. 코드의 흐름과 의도를 더 쉽게 이해할 수 있는 거죠. 따라서 파이썬에서는 `main` 함수가 요구되지 않더라도 `if __name__ == '__main__'`과 `main()`을 사용하는 것을 추천드립니다.
+
+
+
+### 패키지 
+
+- 모듈들을 하나로 묶어 놓은 것. 즉, 아이템 모듈(items.py) 거래 모듈(trasaction.py)를 하나로 묶어서 상점 패키지를 만드는 것. 프로그램의 구성요소를 잘 정리할 수 있고, 재사용이 가능. 
+
+- 패키지 만드는 법은 간단함. 
+
+  하나로 묶어서 디렉토리로 만들고, init을 만들어 주면 됨. IDE에서 파이썬패키지 만들기를 하면, 자동으로 init을 만들어 주는 것. 
+
+- 그걸 그냥 임포트 해서 사용하면 끝. 
+
+  ```python
+  import shapes.volume
+  from shapes.area import square
+  from shapes import volume
+  
+
+  print(shapes.volume.cube(3))
+  print(square(1))
+  
+  ```
+  
+
+- 근데 여기서 중요한게 하단처럼 임포트 하니깐 에러가 남. 파이썬에서 패키지를 임포트 하면, 안에 있는 모듈들은 임포트가 안됨. 패키지 안에 있는 모듈들도 같이 임포트 하려면, __init__을 활용해야 함. 
+
+  ```python
+  import shapes
+  
+  shapes.area.circle(3)
+  ```
+
+  즉 정리하자면
+
+  ```
+  from <package> import <module(s) # 가능
+  from <package.module> import <member(s)> # 가능
+  import shapes # 오류
+  import shapes.volume.cube # 오류
+  ```
+
+  
