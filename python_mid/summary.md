@@ -388,7 +388,6 @@ from shapes import area as ar - 새로운 이름으로 사용 가능함.
   
   ```
   
-
 - 근데 여기서 중요한게 하단처럼 임포트 하니깐 에러가 남. 파이썬에서 패키지를 임포트 하면, 안에 있는 모듈들은 임포트가 안됨. 패키지 안에 있는 모듈들도 같이 임포트 하려면, __init__을 활용해야 함. 
 
   ```python
@@ -399,11 +398,189 @@ from shapes import area as ar - 새로운 이름으로 사용 가능함.
 
   즉 정리하자면
 
-  ```
+  ```python
   from <package> import <module(s) # 가능
   from <package.module> import <member(s)> # 가능
   import shapes # 오류
   import shapes.volume.cube # 오류
+  ```
+
+  #### __init__
+
+- init파일은 무슨 역할을 하는가?
+
+  - init파일은 이것이 파이썬 패키지임을 말해주는 것. 3.3이전에서는 필수여서, 임포트 자체가 불가능했으나, 패키지 호환을 위해 init을 권장함.
+
+  - init은 initialize의 줄임말. 즉, 패키지를 초기화 할 때 사용됨. 처음으로 뭔가를 임포트 하면 이게 제일 먼저 사용된다는 것. 
+  - 실제로 임포트 해보면, init파일 내부가 먼저 실행됨. 
+
+- init을 어떻게 활용행야 할 것인가?
+
+  위에서 보면, import <package>를 하면, 내부 모듈들이 같이 임포트가 되지 않았었음. 패키지를 가져오면서, 내부 것들도 가지고 가려면 이때 init을 활용하는 것. 
+
+  ```python
+  __init__.py
+  
+  from shapes import area, volume
+  
+  run.py
+  
+  import shapes
+  
+  print(shapes.area.square(2))
+  print(shapes.area.cube(2))
+  ```
+
+  init파일 내부에다가 위 처럼 임포트를 해 놓고 쓰면, 
+
+  init에서는 패키지 임포트 할 때, 같이 임포트 하고 싶은 모듈들만 써 놓으면 됨. 
+
+  
+
+  ```python
+  __init__.py 
+  
+  from shapes.area import circle, square
+  
+  run.py
+  import shapes
+  
+  print(shapes.circle(2))
+  print(shapes.square(2))
+  ```
+
+  위처럼 가지고 온다면, run에서는 circle과 square에 직접 접근 해야지. 즉, 위에서 run.py에서 직접 써도 똑같은데 편하게 미리 해놓은거야. 
+
+- init파일에서 변수 정의하기
+
+  여러 모듈에서 필요한 변수들은 __init__에서 한번에 정의해 주는게 좋음. 
+
+  ```python
+  __init__.py
+  
+  PI = 3.14
+  
+  
+  area.py
+  from shapes import PI
+  
+  
+  def circle(radius):
+      return PI * radius * radius
+  ```
+
+  상수 뿐만 아니라 여러 모듈에서 필요한 함수 또는 객체도 정의할 수 있음. 
+
+  패키지 init에서 정의된 애들은 패키지 외부에서도 쓸 수 있음. 
+
+  ```python
+  run.py
+  
+  import shapes
+  shapes.PI # 이렇게 사용 가능. 
+  ```
+
+  
+
+  #### __all__
+
+-  import *을 하면, 모든 모듈을 다 가지고 오라는 소리인데, 막상 dir을 찍어보면, 특수변수 이외에는 아무것도 안나옴. 
+
+  ```
+  from shapes import *
+
+  print(dir())
+  ```
+  
+  ```
+  ['PI', '__annotations__', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+  ```
+  
+  *를 패키지에 적용하면 아무 모듈도 적용이 안됨. 
+  
+-  이런 경우 init에서 바꿔 줘야 함. all은 우리가 import *를 했을때, 뭘 가져와야 하는지를 정의해 주는 함수. 꼭 모든 모듈을 넣어야 하는 것은 아님. 넣고 싶은 모듈을 넣으면 됨. 
+
+  ```
+   __all__=['area', 'volume']
+  ```
+
+  ```
+  ['__annotations__', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'area', 'volume']
+  ```
+
+  
+
+- __all__은 모듈에도 쓸 수 있음. ***from <패키지>.<모듈> import *** 한 경우에 뭐가 나왔으면 좋겠는지를 정의해 놓으면 돼. 
+
+  ```
+   area.py
+   
+   
+  ```
+
+
+
+#### 서브패키지
+
+- 패키지 안에 다른 패키지가 있을 수 있음. 그걸 서브패키지 라고 함. 
+
+- 서브패키지 사용하기. 하단처럼 해 놓으면, 이제 다른 곳에서 ***from mymath import stats***  혹은 ***import mymath.stats***이런 경우에, 해당 함수들이 같이 임포트 되는 것. *패키지를 임포트 하는 경우는 하단 모듈을 같이 안들고 간단는 것만 기억하면 됨.* 
+
+  ```python
+  stats/__init__.py
+  from mymath.stats import average, spread
+  
+  shapes/__init__.py
+  from mymath.shapes import area, volume
+  ```
+
+  ```
+  mymath/__init__.py
+  
+  
+  ```
+
+  
+
+- 참고사항
+
+  ```python
+  # 패키지 임포트(단 이렇게 패키지 임포트 하는 경우는 하단 모듈들 안가져옴. init에서 정의해놔야 함)
+  import mymath
+  
+  # 서브패키지 임포트(단 이렇게 패키지 임포트 하는 경우는 하단 모듈들 안가져옴. init에서 정의해놔야 함)
+  import mymath.shapes
+  
+  # 모듈 임포트
+  import mymath.shapes.area
+  
+  # 모듈 안에 있는 변수나 함수는 이 방식으로 임포트 할 수 없음 
+  import mymath.shapes.area.circle # 오류
+  ```
+
+  ```python
+  # 패키지 안에 있는 패키지 임포트(단 이렇게 패키지 임포트 하는 경우는 하단 모듈들 안가져옴. init에서 정의해놔야 함)
+  from mymath import shapes
+  
+  # 패키지 안에 있는 모듈 임포트
+  from mymath.shapes import area
+  
+  # 모듈 안에 있는 함수 임포트
+  from mymath.shapes.area import circle
+  
+  # import 뒤에는 . 을 쓸 수 없음 
+  from mymath import shapes.area # 오류
+  ```
+
+  
+
+#### 상대 경로
+
+- . 현재경로, .. 상위경로. 
+
+  ```python
+  from .area import *  # 현재 패키지에 있는 area에서 모든 것을 가져와라
+  from .volume import * # 현재 패키지에 있는 volume에서 모든 것을 가져와라
   ```
 
   
