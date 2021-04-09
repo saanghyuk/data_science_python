@@ -601,3 +601,52 @@ from shapes import area as ar - 새로운 이름으로 사용 가능함.
 
   - 외부 라이브러리 : 외부 라이브러리 또는 외부 패키지는 파이썬을 사용하는 일반 개발자들이 패키지를 만들어서 PyPI에 업로드해 놓은 것입니다. **외부 라이브러리는 파이썬의 일부가 아니고 우리가 직접 설치해야 합니다**.
 
+- https://pypi.org/ -> 이 안에 모든 패키지들이 올라와 있음. documentation과 입문자 가이드들을 위한 모든 것들이 나와 있음. 
+
+- 설치하고 사용하는 방법
+
+  ```
+  pip
+  ```
+
+- 파이썬 설치되어 있는 **버전 삭제 하는 방법**.
+  - mac의 finder에서 Go -> Go to Folder -> `/Library/Frameworks/Python.framework/Versions`
+  - 3.x버전을 휴지통으로 옮겨준다(비밀번호 입력하면 됨). 그리고 휴지통 가서 즉시삭제 누르기. 
+  - 그리고 응용프로그램(Applications)에 있는 python3.x디렉토리를 휴지통으로 옮기고 즉시삭제 누르기. 
+
+- 파이참에서 외부 패키지 설치하기. 
+
+  **preference -> project:new_project -> project Interpreter -> +버튼  -> 원하는 패키지 검색 후 입력**. 
+
+- **pip로 다운받기**
+
+  ```
+  pip install <package name>
+  pip3 install <package name>
+  ```
+
+  *지울때는?*
+
+  ```
+  pip3 uninstall <package.name>
+  ```
+
+  *특정 패키지 버전 설치 하기*
+
+  ```
+  pip3 install pandas==1.1.0
+  ```
+
+
+
+#### 패키지 사용 예시(youtube_dl)
+
+- 파이썬으로 유튜브 영상 다운받기. 
+
+  ```
+  pip install youtube_dl
+  ```
+
+  
+
+  

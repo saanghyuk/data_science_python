@@ -8,4 +8,5 @@ def horizontal_flip(list):
     for i in range(len(list)):
         list[i] = list[i][::-1]
     return list
+
 print(horizontal_flip(list))
