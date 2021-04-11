@@ -120,7 +120,7 @@ my_df = pd.DataFrame(two_dimension_list, columns = ['name', 'english_score', 'ma
 
   
 
-- **리스트가 담긴 사전이 아니라, 사전이 담긴 리스트로도 DataFrame을 만들 수 있습니다.**
+- **리스트가 담긴 사전이 아니라, 사전이 담긴 리스트로도 DataFrame을 만들 수 있습니다. **
 
   ```python
   import numpy as np
