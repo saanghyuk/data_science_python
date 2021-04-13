@@ -12,7 +12,7 @@
 #### Usage
 
 ```python
- two_dimension_list = [['dongwook', 50, 86], ['sineui', 89, 31], ['ikjoong', 68, 91], ['yoonsoo', 88, 75]]
+two_dimension_list = [['dongwook', 50, 86], ['sineui', 89, 31], ['ikjoong', 68, 91], ['yoonsoo', 88, 75]]
 
 my_df = pd.DataFrame(two_dimension_list, columns = ['name', 'english_score', 'math_score'], 
                     index = ['a', 'b', 'c', 'd'])
@@ -171,6 +171,7 @@ pd.read_csv('경로', header=None, index_col=0) # 제일 왼쪽 0번째 컬럼�
 |     iPhone XS | 2018-09-21 |        5.8 |    4GB |  iOS 12.0 |     Yes |
 | iPhone XS Max | 2018-09-21 |        6.5 |    4GB |  iOS 12.0 |     Yes |
 
+#### 값 뽑아오기
 | method                                                       | roles                                                        |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `iphone_df.loc['iPhone 8', '메모리']`                        | dataframe.loc['row이름', 'column이름']                       |
@@ -180,7 +181,7 @@ pd.read_csv('경로', header=None, index_col=0) # 제일 왼쪽 0번째 컬럼�
 | `iphone_df.loc[:, ['출시일', '메모리']]` or `iphone_df[['출시일', '메모리']]` | 열 두줄 찾기                                                 |
 | `iphone_df.loc[['iPhone X', 'iPhone XS Max'], :]` or `iphone_df.loc[['iPhone X', 'iPhone 8']]` | 행 두줄 찾기                                                 |
 | `pd.merge(samsong_df, hyundee_df, on='요일')`                | 요일을 기준으로 데이터프레임 합치기. 함수는 두 데이터프레임을 각 데이터에 존재하는 고유값(key)을 기준으로 병합할때 사용한다. 요일이 같은 것 기준으로 **왼쪽에서 오른쪽으로** 붙여줌. |
-| pd.concat([df1, df2])                                        | 말 그대로 물리적으로 이어줌. 위에서 아래로 쭉. 같은 열은 같은 열에 가서 **위에서** **아래로 붙음**. |
+| `pd.concat([df1, df2])`                                      | 말 그대로 물리적으로 이어줌. 위에서 아래로 쭉. 같은 열은 같은 열에 가서 **위에서** **아래로 붙음**. |
 | `df.rename(columns = {'variable': 'Year', 'value': 'Income'}, inplace = False)` | 컬럼 이름 바꾸기, 딕셔너리 내부 key는 원래 이름 value는 바꿀 이름. |
 | `iphone_df.loc['iPhone 8' : 'iPhone XS']`                    | 연속적으로 있을 때, 슬라이싱 가능. iPhone8부터,  iPhone XS까지 들고 옴. |
 | `iphone_df['메모리':'Face ID']`**(X)**<br />`iphone_df.loc[:,'메모리':'Face ID']` **(O)** | 이렇게 하면, 아무것도 안나옴. 컬럼으로 슬라이싱은 복잡하게 써야 함. |
@@ -193,7 +194,38 @@ pd.read_csv('경로', header=None, index_col=0) # 제일 왼쪽 0번째 컬럼�
 | `iphone_df.iloc[[1, 3], [1, 4]]`                             | 복수의 행과 열 가져오기.                                     |
 | `iphone_df.iloc[3:, 1:4]`                                    | 로우는 3번 인덱스부터 끝까지, 컬럼은 1부터 4 전까지 받아오라는 것 |
 | `iphone_df[3:5]`                                             | iloc, loc 안쓰고 이렇게 숫자로 슬라이싱하면, 특이하게 **로우를 슬라이싱 하게 됨**. |
+| `iphone_df.iloc[[1, 3], [1, 4]] = 'd'`                       | 조건에 해당되는 애들만 값 바꾸기.                            |
 |                                                              |                                                              |
+
+
+
+#### 값 바꾸기
+
+| method                                                       | role                                                       |
+| ------------------------------------------------------------ | ---------------------------------------------------------- |
+| `iphone_df.loc['iPhone 8', '메모리'] = 새로운 값`            | 똑같이 찾고 나서, 그냥 거기에 새로운 값 할당해 주면 끝.    |
+| `iphone_df.loc['iPhone 8'] = ['1993-03-07', '4.9', '2GB','iOS 11.0', 'No']` | 특정 행을 짚고 그 줄 싹다 요소 넣어주면 바뀜.              |
+| `iphone_df.loc['iPhone 8'] = 'Hi'`                           | 이렇게 하면 해당 행의 모든 컬럼들이 싹다 한 값으로만 바뀜. |
+| `iphone_df['디스플레이'] = ['4.7 in', '5.5 in', '4.7 in', '5.5 in', '5.8 in', '5.8 in', '6.5 in']` | 해당 컬럼에 해당되는 부분 싹다 바꾸기.                     |
+| `iphone_df['Face ID'] = 'No'`                                | 해당 컬럼의 모든 값을 No로                                 |
+| `iphone_df[['디스플레이', 'Face ID']] = 'x'`                 | 여러 줄 한번에 바꾸기. 두 컬럼 모두 x로 바뀜.              |
+| `iphone_df.loc[['iPhone 7', 'iPhone X']] = 'o'`              | 여러 개의 행 한번에 바꾸기.                                |
+| `iphone_df.loc['iPhone 8 Plus':'iPhone XS']='5'`             | 슬라이싱 해서 한번에 바꾸는 것도 가능함.                   |
+| `iphone_df[iphone_df['디스플레이']>5]  = 'P'`                | 디스플레이 5 인치 넘는애들의 모든 것은 p로 바뀜.           |
+|                                                              |                                                            |
+
+
+
+#### 값 추가 혹은 삭제 
+
+| methods                                                      | role                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `iphone_df.loc['iPhone XR'] = 'x'`                           | 없는 row를 찾고 값을 할당하면, 그 행이 새로 생김.            |
+| `iphone_df['뭉카'] = '3'`                                    | Column 도 마찬가지임.                                        |
+| `iphone_df.loc['하이', '바이'] = 3`                          | 아예 없는 행과 열로 해버리면, 해당 딱 그 칸에는 여전히 값이 할당되고 나머지는 NaN이라고 뜸. |
+| `iphone_df.drop('iPhone XR', axis='index', inplace=False)`   | 해당 행을 삭제하겠다. <br />`axis = 'index' `행을 삭제하겠다는 것.<br />`inplcae = False`를 해 놓으면, 삭제 후 값을 리턴해 주는데 원래 변수에 그 값을 할당은 안함. inplace = True를 해 놓으면, 원래 값에 다시 저장. |
+| `iphone_df.drop('제조사', axis='columns', inplace=True)`     | 열을 삭제하겠다.                                             |
+| `iphone_df.drop(['iPhone 7', 'iPhone 8'], axis='index', inplace=False)` | 여러 행 한번에 삭제하기.                                     |
+| `iphone_df.drop(['뭉카', '바이'], axis='columns', inplace=False)` | 여러 열 한번엥 삭제하기.                                     |
 |                                                              |                                                              |
-|                                                              |                                                              |
-|                                                              |                                                              |
+
