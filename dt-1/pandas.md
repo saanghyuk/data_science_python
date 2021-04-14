@@ -226,6 +226,31 @@ pd.read_csv('경로', header=None, index_col=0) # 제일 왼쪽 0번째 컬럼�
 | `iphone_df.drop('iPhone XR', axis='index', inplace=False)`   | 해당 행을 삭제하겠다. <br />`axis = 'index' `행을 삭제하겠다는 것.<br />`inplcae = False`를 해 놓으면, 삭제 후 값을 리턴해 주는데 원래 변수에 그 값을 할당은 안함. inplace = True를 해 놓으면, 원래 값에 다시 저장. |
 | `iphone_df.drop('제조사', axis='columns', inplace=True)`     | 열을 삭제하겠다.                                             |
 | `iphone_df.drop(['iPhone 7', 'iPhone 8'], axis='index', inplace=False)` | 여러 행 한번에 삭제하기.                                     |
-| `iphone_df.drop(['뭉카', '바이'], axis='columns', inplace=False)` | 여러 열 한번엥 삭제하기.                                     |
+| `iphone_df.drop(['뭉카', '바이'], axis='columns', inplace=False)` | 여러 열 한번에 삭제하기.                                     |
+|                                                              |                                                              |
+
+
+
+
+
+#### Index/Column 설정하기
+
+|    *INDEX NAME* | position | born | number | nationality |
+| --------------: | -------: | ---: | -----: | ----------- |
+| Roberto Firmino |       FW | 1991 |  no. 9 | Brazil      |
+|      Sadio Mane |       FW | 1992 | no. 10 | Senegal     |
+|   Mohamed Salah |       FW | 1992 | no. 11 | Egypt       |
+|       Joe Gomez |       DF | 1997 | no. 12 | England     |
+|  Alisson Becker |       GK | 1992 | no. 13 | Brazil      |
+
+| methods                                                      | roles                                                        |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `liverpool_df.rename(columns={'position':'POSITION'})`       | position 컬럼 이름을 대문자로 바꾸기.  **rename함수 또한, 기존 df를 건들지 않음.** |
+| `liverpool_df.rename(columns={'position':'POSITION'}, inplace=True)` | 기존 데이터프레임에 아예 반영하고 싶으면 여기서도 **inplace=True** 파라미터를 주면됨. |
+| `liverpool_df.rename(columns={'position':'POSITION', 'number':'NUMBER'})` | Dict에 여러값들 한번에 보내줄 수 있음.                       |
+| `liverpool_df.index.name = 'Player Name'`                    | 인덱스에 설명 붙여 주기. 인덱스 위에 ***INDEX NAME*** 자리에 player name이 들어가게 되는 것. |
+| `liverpool_df.set_index('number', inplace=True)`             | number를 인덱스로 만들 수 있음. 근데 이렇게 하면 문제가 기존 인덱스(선수 이름들)가 날라가버림. 그래서, 이 함수를 쓰기 전에는 항상 기존 인덱스를 새로운 컬럼으로 할당해 주고 난 다음에 인덱스를 새로 정해야 함. 얘도 inplace필요함. |
+|                                                              |                                                              |
+|                                                              |                                                              |
 |                                                              |                                                              |
 
