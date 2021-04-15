@@ -195,6 +195,8 @@ pd.read_csv('경로', header=None, index_col=0) # 제일 왼쪽 0번째 컬럼�
 | `iphone_df.iloc[3:, 1:4]`                                    | 로우는 3번 인덱스부터 끝까지, 컬럼은 1부터 4 전까지 받아오라는 것 |
 | `iphone_df[3:5]`                                             | iloc, loc 안쓰고 이렇게 숫자로 슬라이싱하면, 특이하게 **로우를 슬라이싱 하게 됨**. |
 | `iphone_df.iloc[[1, 3], [1, 4]] = 'd'`                       | 조건에 해당되는 애들만 값 바꾸기.                            |
+| `third_mask = df['course name'].isin(list)`                  | 컬럼 네임 value로 다양한 값을 한번에 찾고 싶음면, isin()안에 리스트를 주면, 쉽게 찾을 수 있음. |
+|                                                              |                                                              |
 |                                                              |                                                              |
 
 
@@ -254,3 +256,50 @@ pd.read_csv('경로', header=None, index_col=0) # 제일 왼쪽 0번째 컬럼�
 |                                                              |                                                              |
 |                                                              |                                                              |
 
+
+
+
+
+#### 큰 데이터 쉽게 파악하기
+
+`laptop_df = pd.read_csv('resources/laptops.csv')`
+
+**큰 판다스 데이터프레임 다루기**
+
+| methods                                                      | roles                                                        |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `laptops_df.head()` or `laptops_df.head(7)`                  | 앞에 다섯개 or 앞에 7개                                      |
+| `laptops_df.tail()` or `laptops_df.tail(6)`                  | 뒤에 다섯개 or 뒤에 6개                                      |
+| `laptop_df.shape`                                            | (#행, #열)로 출력됨.                                         |
+| `laptop_df.info()`                                           | 모든 컬럼이 나열되고, 데이터타입 등을 모두 알 수 있음.       |
+| `laptop_df.columns`                                          | 컬럼을 알 수 있음.                                           |
+| `laptop_df.describe()`                                       | 각 컬럼에 대한 통계정보가 나옴.                              |
+| `laptop_df.sort_values(by='price')`                          | 원하는 정보를 기준으로 정렬. price기준으로 정렬. 이것도 원래 df를 건들지는 않음. 새로운 df를 만든 것. |
+| `laptop_df.sort_values(by='price', ascending=False, inplace=True)` | ascending=False하면 큰것이 위로 감. inplace=True해놓으면, 기존 df에다가 저장시킴. |
+
+##### 큰 판다스 시리즈 다루기
+
+| methods                                                      | Roles                                                        |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `laptop_df['brand'].unique()`                                | 해당 시리즈의 유니크한 value가 총 몇개가 있는지.             |
+| `laptop_df['brand'].value_counts()`                          | 시리즈의 각 value들이 몇개씩 있는지.                         |
+| `laptop_df['brand'].describe()`                              | 시리즈에서 describe를 쓰면, count, unique, top(가장 많이 나오는 value), freq(최빈 value가 총 몇번 등장하는지)이 나옴. |
+| `df['room assignment'] = np.where(<bool_list>, 'not allowed', np.where(auditoriumboolseries, "Auditorium", np.where(largeroomboolseries, "Large room", np.where(mediumroomboolseries, "Medirum room", "Small room")))) df` | 해당 bool리스트를 찾아서 거기에 값을 할당함.                 |
+|                                                              |                                                              |
+|                                                              |                                                              |
+
+
+
+
+
+#### Tip
+
+- 컬럼들 중, 특정 이름 들어간 것들 찾고 싶을때. 값이 array로 나오면, str.contain쓰면 편함. 
+
+  ```python
+  searchfor = ['or', 'ap', 'hin', 'nited','many']
+  colNames = df.columns[df.columns.str.contains('|'.join(searchfor))] 
+  colNames```
+  ```
+
+- 
