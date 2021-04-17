@@ -196,7 +196,7 @@ f%matplotlib inline
 
 - **Regression Line**. 
 
-  `sns.lmplot(data=body_df, x='Height', y='Weight')`
+  
 
 ![lmplot](./resources/lmplot.png)
 
