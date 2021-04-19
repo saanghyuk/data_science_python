@@ -166,3 +166,10 @@ sns.clustermap(corr)
  ```
 
 <img src="./resources/EDA_11.png" alt="EDA_11" style="zoom:100%;" />
+
+
+
+
+
+
+
