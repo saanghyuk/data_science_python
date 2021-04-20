@@ -424,6 +424,8 @@ pd.merge(price_df, quantity_df, on='Product', how='right')
 pd.merge(price_df, quantity_df, on='Product', how='outer')
 ```
 
+
+
 |      |  Product |  Price | Quantity |
 | ---: | -------: | -----: | -------: |
 |    0 |   Potato | 3000.0 |     25.0 |
