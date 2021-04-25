@@ -120,11 +120,11 @@
 
   이걸 반복하다 보면, 손실함수의 극소점에 가까이 갈 수 있고 최적의 세타 값들을 찾을 수 있게 되는 것. 
 
-  ![2_17](./resources/2_17.png)
+  <img src="./resources/2_17.png" alt="2_17" style="zoom:130%;" />
 
-  ![2_17](./resources/2_18.png)
+  <img src="./resources/2_18.png" alt="2_17" style="zoom:120%;" />
 
-  <img src="./resources/2_19.png" alt="2_17" style="zoom:120%;" />	![2_17](./resources/2_20.png)
+  <img src="./resources/2_19.png" alt="2_17" style="zoom:140%;" />	<img src="./resources/2_20.png" alt="2_17" style="zoom:130%;" />
 
 
 
@@ -139,3 +139,188 @@
   ![2_21](./resources/2_24.png)
 
   ![2_21](./resources/2_2	5.png)
+
+
+
+
+
+- 절대 어렵지 않다. 우리가 하고자 하는것은 **Θ**를 구하는 것. X와 Y의 행렬은 모두 주어진 상수이다. J(Θ) 함수 또한 사전에 미리 약속되어 있는 것. X와  y가 주어져 있다는 말은 곧, J(Θ)는 바로 Θ에 대한 식으로 정리가 가능하다는 것 이다(X 행렬과 y 벡터는 단지 쉽고 편리하게 보기 위한 수단일 뿐, 계산이 모두 가능하다). 그럼 J라는 함수가 바로 세타에 대한 식으로 정리된다는 것은 편미분 벡터도 바로 계산이 가능하다는 것. 편미분 벡터가 계산이 바로 가능하면, 현재 아무 세터나 넣어서 셋팅을 한 후에 Gradient Descent를 하면서 값을 찾아가기만 하면 된다. ![2_21](./resources/2_26.jpeg)
+
+
+
+
+
+- 실행은 정말 매우 간단하다 
+
+  ```python
+  import numpy as np
+  
+  def prediction(theta_0, theta_1, x):
+      """주어진 학습 데이터 벡터 x에 대해서 모든 예측 값을 벡터로 리턴하는 함수"""
+      return theta_0 + x * theta_1
+      
+  def prediction_difference(theta_0, theta_1, x, y):
+      """모든 예측 값들과 목표 변수들의 오차를 벡터로 리턴해주는 함수"""
+      return prediction(theta_0, theta_1, x) - y    
+      
+  def gradient_descent(theta_0, theta_1, x, y, iterations, alpha):
+      """주어진 theta_0, theta_1 변수들을 경사 하강를 하면서 업데이트 해주는 함수"""
+      for _ in range(iterations):  # 정해진 번만큼 경사 하강을 한다
+          error = prediction_difference(theta_0, theta_1, x, y)  # 예측값들과 입력 변수들의 오차를 계산
+          theta_0 = theta_0 - alpha*(error.mean()) 
+          theta_1 = theta_1 - alpha*((error*x).mean())
+          
+      return theta_0, theta_1
+      
+      
+  # 입력 변수(집 크기) 초기화 (모든 집 평수 데이터를 1/10 크기로 줄임)
+  house_size = np.array([0.9, 1.4, 2, 2.1, 2.6, 3.3, 3.35, 3.9, 4.4, 4.7, 5.2, 5.75, 6.7, 6.9])
+  
+  # 목표 변수(집 가격) 초기화 (모든 집 값 데이터를 1/10 크기로 줄임)
+  house_price = np.array([0.3, 0.75, 0.45, 1.1, 1.45, 0.9, 1.8, 0.9, 1.5, 2.2, 1.75, 2.3, 2.49, 2.6])
+  
+  # theta 값들 초기화 (아무 값이나 시작함)
+  theta_0 = 2.5
+  theta_1 = 0
+  
+  # 학습률 0.1로 200번 경사 하강
+  theta_0, theta_1 = gradient_descent(theta_0, theta_1, house_size, house_price, 200, 0.1)
+  
+  theta_0, theta_1
+      
+  ```
+
+  
+
+- **Simple Linear Regression Visualization.ipyn** 파일 확인해서 cost줄어드는 시각화 한번 체크해보기.
+
+- #### **학습률 알파**
+
+  영상에서는 학습률  *α*를 그냥 작은 숫자라고만 하고,“*경사를 내려갈 때마다 얼마나 많이 그 방향으로 갈 건지를 결정하는 변수*”라고 했는데요.
+
+  이번 노트에서 학습률 알파를 잘 못 고를 때 생기는 문제점에 대해서 알아볼게요.
+
+  좀 더 이해를 간단하게 하기 위해서 이렇게 손실 함수 **J**가 하나의 변수, ***θ***로만 이뤄졌다고 가정할게요.
+
+  - **학습률이 너무 큰 경우**
+
+    먼저 학습률이 크다고 해볼게요. 알파가 크면 클수록 경사 하강을 한 번을 할 때마다 \theta*θ*의 값이 많이 바뀔 텐데요. 그럼 이렇게 되겠죠? 왼쪽과 오른쪽으로 성큼성큼 왔다갔다 하면서 진행이 됩니다. 심지어 **α***가 너무 크면 경사 하강법을 진행할수록 손실 함수 **J**의 최소점에서 멀어질 수도 있습니다.
+
+    ![2_27](./resources/2_27.png)
+
+  - **학습률이 너무 작은 경우**
+
+    반대로 알파가 작으면 어떨까요? ***θ***가 계속 엄청 찔끔찔끔 씩 움직일텐데요. 너무나도 작게 되면 최소 지점을 찾는 게 너무 오래 걸리겠죠? 1분 만에 할 수 있는 작업이 5 분 10 분, 또는 그거보다 더 오래 걸릴 수도 있게 되는 거죠.
+
+    ![2_28](./resources/2_28.png)
+
+  - 적절한 학습률
+
+    그렇기 때문에 알파를 적당한 크기로 정하는 게 중요한데요. 빠르고 정확하게 최소점까지 도달하는 학습률이 가장 좋다고 할 수 있죠.
+
+    ![2_28](./resources/2_29.png)
+
+    가장 “적절한” 학습률은 상황과 문제에 따라 다릅니다. 경사 하강법 코드 시각화 레슨에서 경사 하강을 하면서 손실이 줄어들고 있는 걸 그래프로 표현했었는데요. 이런식으로 나왔었죠? 일부러 적절한 학습률을 골라서 이렇게 나왔던 거고요.
+
+    ![2_30](./resources/2_30.png)
+
+    학습률이 너무 크면 경사 하강법을 할수록 손실 그래프가 이렇게 계속 커질테고요.
+
+    ![2_30](./resources/2_31.png)
+
+    작을 때는 이렇게 `iteration`수가 너무 많아집니다.
+
+    ![2_30](./resources/2_32.png)
+
+    일반적으로 1.0 ~ 0.0 사이의 숫자로 정하고(1,0.1, 0.01, 0001 또는 0.5, 0.05, 0.005 이런 식으로), 여러 개를 실험해보면서 경사 하강을 제일 적게 하면서 손실이 잘 줄어드는 학습률을 선택합니다.
+
+  
+
+
+
+- #### 모델 평가하기
+
+  우리는 계속해서 세타 값을 조율하면서 더 좋은 가설함수를 만들려고 노력하고 있음. 그리고 결국에는 데이터에 가장 잘 맞는 최적선을 찾으려고 함. 이런 가설함수는 세상에 일어나는 일을 수학적으로 표현한다는 의미에서 **모델**이라고 부른다. 데이터를 이용해서 모델을 개선해가는 과정을 모델을 학습시킨다고 말해왔던 것. 
+
+  학습시켜서 아래와 같은 선이 나왔다고 하자. 학습시킨 후에 이 모델이 얼마나 좋은지 평가를 해야 함. 이때 많이 쓰는게 **평균 제곱근 오차**임. 영어로는 **Root Mean Squred Error(RMSE)**임. 지난 번에 배웠던 평균제곱오차에 그냥 루트를 한 것. 루트는 왜 할까? 우리가 집 가격을 예측한다고 하면 목표변수의 단위는 원.  그런데 오차 제곱을 하면, 단위가 원 제곱이 됨. 와닿지 않는 단위. 그래서 마지막에 루트를 써서 단위를 다시 원으로 만들어 주는 것. 
+
+  ![2_30](./resources/2_33.png)
+
+  그런데 여기서 문제가 뭐냐면, 우리는 이 데이터에 맞게 평균제곱오차로 학습을 시켰으니깐, 당연히 **이 모델이 평균제곱근 오차가 제일 낮을 수 밖에 없잖아**. 그렇다면 어떻게 해야 더 신빙성이 있을까?
+
+  **보통은 모델을 학습시키기 위한 데이터와 모델을 평가하기 위한 데이터를 나눈다.** Training Set과 Test Set
+
+  과정을 보자면, 
+
+  	1. Training Set으로 모델을 학습시켜서 최적선을 구한다. 
+   	2. 그 모델을 가지고 Test Set으로 놓고 테스트 한다. 평균제곱근 오차로 평가. 
+
+  ![2_30](./resources/2_34.png)
+
+
+
+
+
+### Scikit Learn으로 구현하기 
+
+- 구현 자체는 엄청 쉬움
+
+  ```python
+  from sklearn.datasets import load_boston
+  from sklearn.model_selection import train_test_split
+  from sklearn.linear_model import LinearRegression
+  from sklearn.metrics import mean_squared_error
+  
+  import pandas as pd
+  ```
+
+  ```python
+  # 데이터 불러오기
+  boston_dataset = load_boston()
+  print(boston_dataset.DESCR) # Describe
+  boston_dataset.feature_names
+  boston_dataset.data.shape # 506행 13열
+  boston_dataset.target.shape
+  ```
+
+  ```python
+  x = pd.DataFrame(boston_dataset.data, columns = boston_dataset.feature_names)
+  x
+  
+  # 지금 변수 하나만 보고 있음.
+  x = x[['AGE']]
+  x
+  
+  y = pd.DataFrame(boston_dataset.target, columns=['MEDV'])
+  y
+  ```
+
+  ```python
+  # 모델 학습시키는 데이터, 평가 데이터 나누기
+  # test_size = 0.2 20%만 테스트 데이터로 사용하겠다. 
+  # random_state는 그 20%를 어떻게 고를지 말해주는 파라미터. Optional이라 안넘겨도 됨. 안넘겨주면 실행할때마다 20개씩 새로운 거 랜덤으로 골라주고, 
+  # 어떤 정수값을 넣어주면, 계속 똑같은 값 고름. 아무 정수나 써도 됨. 
+  
+  x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state = 5)
+  ```
+
+  ```python
+  model = LinearRegression()
+  model.fit(x_train, y_train)
+  print(model.coef_) # theta 1
+  print(model.intercept_) # theta 0
+  
+  # f(x) = 31.04617413 - -0.12402883x 라는 뜻
+  
+  
+  y_test_prediction = model.predict(x_test)
+  y_test_prediction # 예측값들. 
+  
+  # 평균제곱근 오차로 평가
+  mean_squared_error(y_test, y_test_prediction) ** 0.5
+  # 오차가 8.23정도 나오는것 보니 대략 이 모델로 집값 예측하면 8천달러 정도의 오차가 있다는 뜻. 
+  
+  ```
+
+  
+
