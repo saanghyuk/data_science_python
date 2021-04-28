@@ -84,7 +84,7 @@
 
   ![3_21](./resources/3_21.jpeg)
 
-  ![3_22](./resources/3_22.jpeg)
+  ![3_49](./resources/3_22.jpeg)
 
 
 
@@ -191,8 +191,14 @@
 
   ![3_33](./resources/3_39.png)
 
-  예시 코드
+  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_47.jpeg)
+  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_48.jpeg)
+  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_49.jpeg)
+  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_50.jpeg)
+  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_51.jpeg)  
 
+  예시 코드
+  
   ```python
   import numpy as np
   
@@ -223,9 +229,9 @@
   # 정규 방적식으로 theta 계산
   theta = normal_equation(X, y)
   theta
-  
-  ```
 
+  ```
+  
   
 
 
