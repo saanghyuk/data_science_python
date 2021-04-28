@@ -325,3 +325,71 @@
 
 
 
+
+
+
+
+### Scikit-Learn
+
+- 데이터 준비
+
+  ```python
+  from sklearn.datasets import load_boston
+  import pandas as pd
+  
+  boston_dataset = load_boston()
+  print(boston_dataset.DESCR) # 데이터에 대한 설명 출력
+  
+  boston_dataset.feature_names # 각 변수의 이름들 출력
+  boston_dataset.data # 실제 데이터(ndarray로 나옴)
+  boston_dataset.target # y값, target data
+  ```
+
+  ```python
+  X = pd.DataFrame(boston_dataset.data, columns=boston_dataset.feature_names)
+  X
+  
+  y = pd.DataFrame(boston_dataset.target, columns=['MEDV'])
+  y
+  ```
+
+  
+
+- 실제 실행. 변수가 여러개이긴 하지만, Simple Linear Regression과 완전히 같음
+
+  ```python
+  from sklearn.datasets import load_boston
+  from sklearn.model_selection import train_test_split
+  from sklearn.linear_model import LinearRegression
+  from sklearn.metrics import mean_squared_error
+  import pandas as pd
+  
+  boston_dataset = load_boston()
+  X = pd.DataFrame(boston_dataset.data, columns=boston_dataset.feature_names)
+  y = pd.DataFrame(boston_dataset.target, columns=['MEDV'])
+  
+  ```
+
+  ```python
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 5)
+  
+  
+  print(X_train.shape)
+  print(X_test.shape)
+  print(y_train.shape)
+  print(y_test.shape)
+  
+  model = LinearRegression()
+  model.fit(X_train, y_train)
+  
+  model.coef_ # theta들
+  model.intercept_ # theta 0 (상수항)
+  
+  
+  y_test_prediction = model.predict(X_test)
+  y_test_prediction
+  
+  mean_squared_error(y_test, y_test_prediction) ** 0.5 # 평균 제곱근 오차 약 4500달러 정도의 오차가 있음. 
+  ```
+
+  
