@@ -197,7 +197,9 @@
 
   <img src="./resources/5_35.png" alt="5_5" style="zoom:100%;" />
 
+  **증명 : https://pierceh89.github.io/wiki/logistic-regression/**
 
+  
 
 - #### 로지스틱 회귀의 표현
 
@@ -291,6 +293,18 @@
 
 
 
+- #### 정리 및 증명
+
+  ![5_45](./resources/5_45.jpeg)
+	![5_45](./resources/5_46.jpeg)
+	![5_45](./resources/5_47.jpeg)
+	![5_45](./resources/5_48.jpeg)
+	![5_45](./resources/5_49.jpeg)
+	![5_45](./resources/5_50.jpeg)
+	![5_45](./resources/5_51.jpeg)
+
+
+
 - #### 실습해보기
 
   ```python
@@ -324,7 +338,7 @@
   model.score(X_test, y_test) # 96% 확률로 제대로 분류한다는 뜻. 
   ```
 
-- #### 실습2
+- #### 실습 
 
   ```python
   # 필요한 라이브러리 import
