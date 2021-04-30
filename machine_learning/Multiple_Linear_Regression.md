@@ -191,11 +191,7 @@
 
   ![3_33](./resources/3_39.png)
 
-  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_47.jpeg)
-  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_48.jpeg)
-  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_49.jpeg)
-  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_50.jpeg)
-  ![3_47](/Users/sanghyuk/Documents/data_science_python/machine_learning/resources/3_51.jpeg)  
+  
 
   예시 코드
   
@@ -244,7 +240,7 @@
   | :--------------------------------------------------------: | :----------------------------------------------------------: |
   |           적합한 학습율 α를 찾거나 정해야 한다.            |                학습율 α*를 정할 필요가 없다.                 |
   |                  반복문을 사용해야 한다.                   |                한 단계로 계산을 끝낼 수 있다.                |
-  | 입력 변수의 개수 n*n*이 커도 효율적으로 연산을 할 수 있다. | 입력 변수의 개수 n*n*이 커지면 커질수록 월등히 비효율적이다. (행렬 연산을 하는 비용이 경사 하강법을 하는 것보다 크다) |
+  | 입력 변수의 개수 n*n*이 커도 효율적으로 연산을 할 수 있다. | 입력 변수의 개수 *n*이 커지면 커질수록 월등히 비효율적이다. (행렬 연산을 하는 비용이 경사 하강법을 하는 것보다 크다) |
   |                                                            | 역행렬이 존재하지 않을 수도 있다 (이때는 pseudo inverse를 이용해서 다르게 계산하는 방법이 있기 때문에 큰 문제는 안 됨) |
 
   이런 차이가 있습니다.
