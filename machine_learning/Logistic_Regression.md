@@ -295,7 +295,11 @@
 
 - #### 정리 및 증명
 
-  ![5_45](./resources/5_45.jpeg)
+  [Logistic Gradient 증명 1](https://medium.com/analytics-vidhya/derivative-of-log-loss-function-for-logistic-regression-9b832f025c2d)
+	
+	[Logistic Gradient 증명 2](https://pierceh89.github.io/wiki/logistic-regression/)
+	
+	![5_45](./resources/5_45.jpeg)
 	![5_45](./resources/5_46.jpeg)
 	![5_45](./resources/5_47.jpeg)
 	![5_45](./resources/5_48.jpeg)
