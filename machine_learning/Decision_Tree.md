@@ -1,3 +1,5 @@
+
+
 # Decision Tree
 
 결정트리는 예/아니오로 답할 수 있는 질문들이 있고, 그 질문들을 답해나가면서 분류하는 알고리즘. 
@@ -257,3 +259,78 @@
 
 
 - 현우정리: Decision Tree는 그냥 Feature로 만드는 질문만 생각하면 됨. 애초에 실전에서 독감인지를 몰라서 돌리는건데, 독감인지를 물어보는게 무슨의미야? 아무의미가 없음. 그냥 우리는 Feature만 생각하면서 질문을 만들고, 다 분류될때까지 계속 진행만 하면 됨. 만약 Depth가 제한되있으면 지금까지 한 것 중에 제일 많은걸로 고르면 끝. 
+
+
+
+- #### sklearn으로 Decision Tree 해보기
+
+  Preparing Data
+
+  ```python
+  from sklearn.datasets import load_iris
+  import pandas as pd
+  
+  iris_data = load_iris()
+  print(iris_data.DESCR)
+  
+  X = pd.DataFrame(iris_data.data, columns=iris_data.feature_names)
+  y = pd.DataFrame(iris_data.target, columns=['class'])
+  
+  ```
+  **X**
+
+  | sepal length (cm) | sepal width (cm) | petal length (cm) | petal width (cm) |      |
+  | ----------------: | ---------------: | ----------------: | ---------------: | ---- |
+  |                 0 |              5.1 |               3.5 |              1.4 | 0.2  |
+  |                 1 |              4.9 |               3.0 |              1.4 | 0.2  |
+  |                 2 |              4.7 |               3.2 |              1.3 | 0.2  |
+  |                 3 |              4.6 |               3.1 |              1.5 | 0.2  |
+  |                 4 |              5.0 |               3.6 |              1.4 | 0.2  |
+  |               ... |              ... |               ... |              ... | ...  |
+
+  ```
+  
+  ```
+
+  **y**
+  
+  |      | class |
+  | ---: | ----- |
+  |    0 | 0     |
+  |    1 | 0     |
+  |    2 | 0     |
+  |    3 | 0     |
+  |    4 | 0     |
+  |  ... | ...   |
+  
+  ```python
+  from sklearn.model_selection import train_test_split
+  from sklearn.tree import DecisionTreeClassifier
+  
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 5)
+  
+  # max_depth = 최대 깊이
+  model = DecisionTreeClassifier(max_depth = 4)
+  
+  model.fit(X_train, y_train)
+  model.predict(X_test)
+  model.score(X_test, y_test) # 결과값 90 나옴. 90% 확률로 제대로 분류한다는 뜻. 
+  ```
+  
+  또한 중요한 것은 모델을 학습시키면 각 중요도가 자동으로 변수(***model.feature_importances_***)로 저장됨. 
+  
+  Visualization 
+  
+  ```python
+  importances =  model.feature_importances_
+  
+  indices_sorted = np.argsort(importance)
+  
+  plt.figure()
+  plt.title("Feature Importances")
+  plt.bar(range(len(importances)), importances[indices_sorted])
+  plt.xticks(range(len(importances)), X.columns[indices_sorted], rotation=90)
+  plt.show()
+  ```
+  
+  ![7_32](./resources/7_32.png)
