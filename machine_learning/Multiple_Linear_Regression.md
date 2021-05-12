@@ -225,7 +225,7 @@
   # 정규 방적식으로 theta 계산
   theta = normal_equation(X, y)
   theta
-
+  
   ```
   
   
