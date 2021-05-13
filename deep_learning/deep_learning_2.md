@@ -388,7 +388,13 @@
 
 
 
+- #### 정리
 
+  <img src="./resources/2_130.jpeg" alt="2_42"/>
+
+  <img src="./resources/2_131.jpeg" alt="2_42"/>
+
+  <img src="./resources/2_132.jpeg" alt="2_42"/>
 
 - 예시 과제 
 
