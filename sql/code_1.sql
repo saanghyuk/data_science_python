@@ -1,0 +1,1 @@
+SELECT * FROM copang_main.member WHERE address LIKE '서울%';
