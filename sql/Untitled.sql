@@ -1,3 +1,1 @@
-SELECT * FROM copang_main.member 
-ORDER BY sign_up_day DESC
-LIMIT 10;
+SELECT MAX(height) FROM copang_main.member;
