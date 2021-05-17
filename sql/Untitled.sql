@@ -1,2 +1,3 @@
-SELECT * FROM copang_main.member WHERE 
-(gender = 'm' AND height > 180) OR (gender ='f' AND height>170);
+SELECT * FROM copang_main.member 
+ORDER BY sign_up_day DESC
+LIMIT 10;
