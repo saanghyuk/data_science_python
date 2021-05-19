@@ -713,3 +713,463 @@
 
 
 
+
+
+- #### 그룹핑해서 보기 2
+
+  지역으로 그룹핑을 하고 싶은데, address로 그대로 그룹핑을 하면, row 하나마다 고유하게 하나의 그룹이 생김. 그래서, 인천/경기 이런식으로 그룹핑을 하고 싶다면?
+
+  ```sql
+  SELECT 
+  	SUBSTRING(address, 1, 2)  as region,
+      COUNT(*)
+  FROM copang_main.member 
+  GROUP BY SUBSTRING(address, 1, 2);
+  ```
+
+  그런데 사실 그룹핑은 여러개의 컬럼을 써도 됨. 
+
+  ![1_188](./resources/1_188.png)
+
+
+
+- #### 그룹핑해서 보기 3
+
+  이 중에 특정 그룹만 보고 싶다면 어떻게 할까?
+
+  **having**은 해당 그룹을 선별하는 것. 
+
+  ```sql
+  SELECT 
+  	SUBSTRING(address, 1, 2)  as region,
+      gender,
+      COUNT(*)
+  FROM copang_main.member 
+  GROUP BY 
+  	SUBSTRING(address, 1, 2), 
+      gender
+  HAVING region ='서울';
+  
+  ```
+
+  HAVING에도 조건을 추가할 수 있음. 
+
+  ```sql
+  SELECT 
+  	SUBSTRING(address, 1, 2)  as region,
+      gender,
+      COUNT(*)
+  FROM copang_main.member 
+  GROUP BY 
+  	SUBSTRING(address, 1, 2), 
+      gender
+  HAVING 
+  	region ='서울' 
+      AND gender='m';
+  ```
+
+  그런데 왜 where는 안쓰지? 
+
+  **HAVING을 WHERE로 바꾸면, 오류가 남**
+
+  **WHERE는 ROW를 필터링 할때, HAVING은 그룹핑 된 애들을 가지고 다시 필터링 할때 사용하는 것. 잊지말자.**
+
+  이번에는 REGION컬럼이 NULL인 그룹들은 제외해보자. 
+
+  ```sql
+  SELECT 
+  	SUBSTRING(address, 1, 2)  as region,
+      gender,
+      COUNT(*)
+  FROM copang_main.member 
+  GROUP BY 
+  	SUBSTRING(address, 1, 2), 
+      gender
+  HAVING 
+  	region ='서울' 
+      AND gender='m';
+  
+  ```
+
+  좀 더 정리된 형식으로 보고 싶음. 
+
+  ```sql
+  SELECT 
+  	SUBSTRING(address, 1, 2)  as region,
+      gender,
+      COUNT(*)
+  FROM copang_main.member 
+  GROUP BY 
+  	SUBSTRING(address, 1, 2), 
+      gender
+  HAVING 
+  	region IS NOT NULL 
+      AND gender='m'
+  ORDER BY 
+  	region ASC, 
+      gender DESC;
+  ```
+
+- #### GROUP BY를 쓸 때, 지켜야 하는 규칙
+
+  잠깐 이전 영상에서 사용했던 SQL 문을 다시 보겠습니다. 
+
+  ![1_188](./resources/1_189.png)
+
+  지금 
+
+  1. **주요 지역(SUBSTRING(address, 1, 2) → region)**
+  2. **성별(gender)**
+
+  의 조합(서울-남성, 서울-여성, 경기-남성, 경기-여성 등)을 기준으로 
+
+  그루핑이 이루어졌습니다. 
+
+  그런데 이렇게 GROUP BY를 사용할 때는 지켜야하는 중요한 규칙이 하나 있는데요. 
+
+  그건 바로 GROUP BY를 사용할 때는, **SELECT 절에는** 
+
+  **(1)** **GROUP BY** **뒤에서 사용한 컬럼들 또는**
+
+  **(2) COUNT, MAX 등과 같은 집계 함수만** 
+
+  **쓸 수 있다는 규칙입니다. 이건 거꾸로 말해** **GROUP BY** **뒤에 쓰지 않은 컬럼 이름을 SELECT 뒤에 쓸 수는 없다는 말입니다.** 
+
+  왜 그런 걸까요?
+
+  지금 위 그림에서 주황색, 초록색으로 구분된 각 그룹은 단순한 row 하나가 아닙니다. 지금 하나의 row는 하나의 그룹을 의미하기 때문에 그 안에 여러 row들이 포함된 걸로 생각해야 맞습니다.
+
+  **그런데 GROUP BY 뒤에 쓰지 않은, 그러니까 그루핑 기준으로 사용하지 않은 컬럼명을** 
+
+  **SELECT 절 뒤에 써서 조회하려고 하면,** 
+
+  **각 그룹의 row들 중에서 해당 컬럼의 값을** 
+
+  **어느 row에서 가져와야할지 결정할 수가 없습니다.** 
+
+  예를 들어, 위 SQL 문에서 제가 그루핑 기준으로 사용하지 않은 age라는 컬럼명을 SELECT 문 뒤에 붙이면 어떻게 될까요? 
+
+  ![1_188](./resources/1_190.png)
+
+  각 그룹에 속한 여러 row들에서 어떤 row의 age 컬럼의 값을 출력해야하는지 결정할 수가 없습니다. 그래서 이 SQL 문을 실행하면 다음과 같은 에러 메시지를 볼 수 있습니다. 
+
+  **Error Code: 1055. Expression #3 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'copang_main.member.age' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by**
+
+  이 에러 메시지의 내용을 요약하면, 그루핑 기준으로 사용되지 않은 컬럼(nonaggregated column)이 SELECT 절에 존재하면 안 된다는 뜻입니다. 
+
+  age 컬럼은 그루핑 기준으로 쓰지 않았는데 SELECT 뒤에 써서 그 값을 조회하려고 하니 에러가 난 겁니다. 
+
+  GROUP BY를 사용할 때는 이 사용 규칙을 반드시 기억하셔야 합니다.
+
+  그런데 위 규칙을 보면 **(2)** **COUNT, MAX 등과 같은 집계 함수****는 사용할 수 있다**는 내용도 있는데요.
+
+  그러니까 이런 사용법은 가능합니다. 
+
+  ![1_188](./resources/1_191.png)
+
+  SELECT 절 뒤에 age를 바로 쓰는 건 안 되지만, AVG(age)처럼 집계 함수의 인자로 사용하는 건 괜찮습니다. 왜냐하면 이렇게 하면 각 그룹에서 특정 row의 age 값을 보여주는 게 아니라 그냥 각 그룹 내 모든 row들의 age 컬럼의 값의 평균값을 구하면 되기 때문입니다. 즉, 그루핑 기준으로 사용하지 않은 컬럼이라도 SELECT 절 뒤에서 집계 함수의 인자로는 사용할 수 있는 겁니다. 
+
+  자, 이때까지의 내용을 정리하자면, 
+
+  (1) **GROUP BY** 절 뒤에 쓴 컬럼 이름들만, **SELECT** 절 뒤에도 쓸 수 있다.
+
+  (2) 대신 SELECT 절 뒤에서 **집계 함수**에 그 외의 컬럼 이름을 인자로 넣는 것은 허용된다.
+
+  입니다.
+
+  GROUP BY에 관한 이 규칙을 확실하게 이해하고 넘어가세요.
+
+
+
+- #### SELECT 문의 실행 순서
+
+  우리가 이때까지 배웠던 SELECT 문의 각 절들을 정리해보겠습니다.
+
+  각 절들을, **더 앞에 나와야 하는 순서대로 써보겠습니다.** 
+
+  1. SELECT 
+  2. FROM
+  3. WHERE
+  4. GROUP BY
+  5. HAVING 
+  6. ORDER BY
+  7. LIMIT 
+
+  각 절의 용도가 뭔지는 다 기억하셔야 합니다. 그런데 이런 작성 순서만큼이나 중요한 사실이 하나 있습니다.
+
+  이 사실은 여러분의 SQL 해석 능력을 한층 업그레이드해줄 사실인데요.
+
+  그것은 바로 각 절들이 위에 쓴 순서대로 실행되는 것이 아니라
+
+  사실은 아래의 순서대로 해석 및 실행된다는 사실입니다. 
+
+  1. **FROM**
+  2. **WHERE** 
+  3. **GROUP BY**
+  4. **HAVING** 
+  5. **SELECT**
+  6. **ORDER BY**
+  7. **LIMIT** 
+
+  어떤 식으로 해석 및 실행되는지를 하나씩 차례대로 살펴보면 다음과 같습니다.
+
+  1. FROM : 어느 테이블을 대상으로 할 것인지를 먼저 결정합니다. 
+  2. WHERE : 해당 테이블에서 특정 조건(들)을 만족하는 row들만 선별합니다. 
+  3. GROUP BY : row들을 그루핑 기준대로 그루핑합니다. 하나의 그룹은 하나의 row로 표현됩니다.
+  4. HAVING : 그루핑 작업 후 생성된 여러 그룹들 중에서, 특정 조건(들)을 만족하는 그룹들만 선별합니다. 
+  5. SELECT : 모든 컬럼 또는 특정 컬럼들을 조회합니다. SELECT 절에서 컬럼 이름에 alias를 붙인 게 있다면, 이 이후 단계(ORDER BY, LIMIT)부터는 해당 alias를 사용할 수 있습니다.
+  6. ORDER BY : 각 row를 특정 기준에 따라서 정렬합니다. 
+  7. LIMIT : 이전 단계까지 조회된 row들 중 일부 row들만을 추립니다. 
+
+  어떤가요? SQL 문의 실행 흐름이 잘 느껴지시나요?
+
+  이 실행 흐름을 보면, 이전 영상에서 제가 강조했던 WHERE 절과 HAVING 절의 차이도 잘 이해되실 겁니다.
+
+  앞으로 여러분이 이 실행 순서만 잘 기억한다면 아무리 어려운 SQL 문을 봐도 어떤 결과가 리턴될지 쉽게 파악할 수 있을 겁니다.
+
+  여러분은 실무에서 아마도 길고 복잡한 SQL 문들을 만나게 될 겁니다. 그런데 이 실행 순서를 확실히 숙지하고 있지 않으면, SQL 문이 조금만 복잡해져도 길을 잃게 됩니다.
+
+  SQL 문의 실행 순서, 확실하게 암기하세요!
+
+
+
+- #### 그룹핑해서 보기 4
+
+  ```sql
+  SELECT 
+  	SUBSTRING(address, 1, 2)  as region,
+      gender,
+      COUNT(*)
+  FROM copang_main.member 
+  GROUP BY 
+  	SUBSTRING(address, 1, 2), 
+      gender
+  HAVING 
+  	region IS NOT NULL 
+  ORDER BY 
+  	region ASC, 
+      gender DESC;
+  ```
+
+  ![1_192](./resources/1_192.png)
+
+  경기도에 사는 총 회원수, 서울에 사는 총 회원수가 궁금하지 않아? 
+
+  그 키워드가 바로 **ROLLUP**
+
+  ```sql
+  SELECT 
+  	SUBSTRING(address, 1, 2)  as region,
+      gender,
+      COUNT(*)
+  FROM copang_main.member 
+  GROUP BY 
+  	SUBSTRING(address, 1, 2), 
+    gender
+  WITH ROLLUP
+  HAVING 
+  	region IS NOT NULL 
+  ORDER BY 
+  	region ASC, 
+      gender DESC;
+  ```
+
+  ![1_192](./resources/1_193.png)
+
+  새로 생긴 row는 gender는 고려하지 않고, region만을 고려하는 COUNT값을 보여주고 있음. 
+
+  즉 얘네들은 일종의 부분총계를 담고 있음. 이게 **WITH ROLLUP**의 기능. 
+
+  ***지금 보면, region과 gender의 조합을 기준으로 그룹핑을 했음. 지금처럼 하면, 먼저 써준 region컬럼이 gender컬럼 보다 상위 기준. 이런 상태에서 WITH ROLLUP을 사용하면 상위기준인 region 안에서 각 그룹들을 합친 값들을 보여줌.*** 
+
+  ![1_192](./resources/1_194.png)
+
+  
+
+*영상의 SQL 문을 다시 볼까요?*
+
+
+
+```sql
+SELECT SUBSTRING(address, 1, 2) as region, gender, COUNT(*)
+FROM member
+GROUP BY SUBSTRING(address, 1, 2), gender WITH ROLLUP
+HAVING region IS NOT NULL
+ORDER BY region ASC, gender DESC;
+```
+
+이 SQL 문을 실행기에서 직접 실행해보세요. 
+
+<img src="./resources/1_195.png" alt="1_192" style="zoom:50%;" />
+
+
+
+그럼 영상의 내용대로 부분 총계들이 잘 보일 겁니다. 
+
+**그런데 사실 이 결과는 부분 총계 row가 하나 빠져있는 상태입니다.** 
+
+​	원래의 SQL 문에서 **HAVING region IS NOT NULL** 부분을 제거하고 다시 실행해보세요. 그럼 아래와 같은 결과가 나오는데요.
+
+<img src="./resources/1_196.png" alt="1_192" style="zoom:50%;" />
+
+﻿
+
+위 결과 중에서 **빨간색 1번 표시가 있는 row**를 보세요. 해당 row는 region 컬럼과 gender 컬럼을 고려하지 않은 부분 총계, 그러니까 전체 총계를 나타내는 row입니다. **원래는 이 row까지 보였여야 맞는 겁니다.** 
+
+그럼 아까는 왜 이 row가 안 보였던 걸까요? 
+
+그건 바로 
+
+```sql
+SELECT SUBSTRING(address, 1, 2) as region, gender, COUNT(*)
+FROM member
+GROUP BY SUBSTRING(address, 1, 2), gender WITH ROLLUP
+HAVING region IS NOT NULL
+ORDER BY region ASC, gender DESC;
+```
+
+에서 **HAVING region IS NOT NULL** 절 때문입니다. 회원 중에서는 address 컬럼이 NULL인 회원들도 있었습니다. 그럼 당연히 그 회원들은 region도 NULL이겠죠? 이런 회원들이 있는 그룹은 결과에서 제외하기 위해 이 HAVING 절을 추가한 건데요. 
+
+그래서 이전 결과에서는 위 그림의 파란색 2, 3, 4번 row들(region 컬럼에 원래 값이 없고 NULL인 row들)이 제외되었던 겁니다. 
+
+**그런데 여기서 문제는, 그 과정에서 의도치 않게 빨간색 1번 row(부분 총계 row)도 함께 제외되어 버렸다는 점입니다. 제가 제외하고 싶었던 NULL은 그 NULL이 아니었는데 말이죠.**
+
+정리하면,	
+
+
+
+빨간색 1번 - region 컬럼과 gender 컬럼을 그루핑 기준에서 제외한 부분 총계(=전체 총계)
+
+*파란색 2번* - address 컬럼이 원래 NULL이고 gender 컬럼의 값이 m인 그룹
+
+*파란색 3번* - address 컬럼이 원래 NULL이고 gender 컬럼의 값이 f인 그룹 
+
+*파란색 4번* - **(2번 + 3번)** 그룹(=region 컬럼이 NULL이고 gender 컬럼을 고려하지 않은 그룹의 부분 총계)
+
+이런 상태인데요. 
+
+그런데 저는
+
+(1) 원래 region 컬럼이 NULL인 row들은 아예 제외하고(=파란색 2,3,4번은 아예 제외하고)
+
+(2) 부분 총계는 빠짐없이 모두 보고 싶습니다.(=빨간색 1번은 보고 싶습니다)
+
+
+
+**HAVING region IS NOT NULL 절을 쓰자니 (2)를 만족하지 못하고,** 
+
+**쓰지 않으면 (1)을 만족하지 못합니다. 어떻게 해야할까요?**
+
+'원래의 NULL'   vs   '부분 총계임을 나타내기 위해 사용된 NULL'
+
+이 둘을 구분할 수 있는 방법이 있다면 좋을 것 같은데요. 
+
+그 방법은 다음 노트에 나와있습니다. 다음 노트에서 **GROUPING 함수**를 설명한 부분을 자세히 읽어보시고 해결책을 스스로 생각해보세요.
+
+> 약간 이해가 어렵긴 한데, 지금 우리가  HAVING region IS NOT NULL을 해놨기 때문에, 지역은  NULL이면서 gender는 M, F, 그리고 둘의 합계 총계인 위의 2, 3, 4번은 없어진 게 맞음. 그런데 문제는 원래 NOT NULL을 굳이 안해놓으면 전체 총계도 NULL, NULL이라고 해서 나옴. 위에서 1번인  NULL, NULL은 두 기준을 모두 고려 안한 24개의 총계를 보여주는 것. 그런데, 실제 NULL값을 없애려다가 같이 없어짐. 
+
+- #### WITH ROLLUP에 관해 더 알아보기
+
+  이전 영상에서는 각 그룹의 부분 총계를 구해주는 **WITH ROLLUP 구문**을 배웠습니다. 
+
+  이번 노트에서는 이 WITH ROLLUP에 관한 2가지 사실을 알아볼게요. 
+
+  **1. GROUP BY 뒤 기준들의 순서에 따라 WITH ROLLUP 의 결과도 달라집니다.**
+
+  일단 member 테이블의 row들을 총 3가지 컬럼을 기준으로 그루핑해보겠습니다. 
+
+  1. 생일의 연도
+  2. 가입일자의 연도
+  3. 성별
+
+  아래 SQL 문을 볼까요?
+
+  <img src="./resources/1_197.png" alt="1_192" style="zoom:50%;" />
+
+  날짜에서 연도를 추출하기 위해 YEAR 함수를 사용했고, 생일 연도에는 b_year, 가입 연도에는 s_year 라는 alias를 붙였네요.
+
+  지금 3가지 기준을 갖고 그루핑한 결과 중 일부를 빨간색 박스로 표시했는데요. 
+
+  잠깐 회색과 보라색 영역에 주목하세요.
+
+  이 영역들은 모두 생일 연도와 가입 연도의 조합을 기준으로 했을 때의 각 그룹 내에서, 딱히 성별은 구별하지 않은 부분 총계를 나타내고 있습니다. gender 컬럼에 NULL이 써있는 거 보이시죠? 혹시 이 말이 이해되지 않으시면 이전 영상을 다시 보고 와주세요.
+
+  그리고 마지막 연두색 부분은 생일 연도가 1992인 경우에 해당하는 모든 row의 수, 그러니까 가입 연도와 성별을 따지지 않은, 방금 전보다 조금 더 광범위한 수준의 부분 총계를 나타내는 부분입니다. 이렇게 그루핑 기준이 여러 개일 때는 **WITH ROLLUP이 점차적으로 넓은 범위의 부분 총계를 보여줍니다.** 
+
+  여기까지는 잘 이해되시죠?
+
+  그리고 결과의 맨 아랫부분을 살펴보면 
+
+  <img src="./resources/1_198.png" alt="1_192" style="zoom:50%;" />
+
+  모든 컬럼이 NULL인, 그러니까 세 가지 기준을 모두 고려하지 않은 부분 총계를 보여주고 있습니다. **그런데 이 말은 곧 전체 총계**라는 뜻입니다. 그루핑 기준 중 어떤 기준도 딱히 따지지 않은 결과니까요. 빨간색 박스 안의 row는 지금 이 테이블의 총 row 수인 24를 보여주고 있습니다.
+
+  여기서 추가적으로 알아야할 중요한 사실은 바로,
+
+  **WITH ROLLUP**이 GROUP BY 뒤에 나오는 그루핑 기준의 등장 순서에 **맞춰서** 계층적인 부분 총계를 보여준다는 점입니다.
+
+  **이 말은 GROUP BY 뒤에 나오는 그루핑 기준의 등장 순서에 따라 WITH ROLLUP이 출력하는 결과가 달라진다는 뜻인데요.** 
+
+  그럼 한번 GROUP BY 뒤에서 생일 연도(b_year)와 가입 연도(s_year)의 순서를 바꾸고, SELECT 뒤에서도 순서를 바꿔보겠습니다.
+
+  그리고 정렬 순서도 가입 연도를 기준으로 내림차순하는 것으로 변경할게요. 그리고 실행하면,
+
+  <img src="./resources/1_199.png" alt="1_192" style="zoom:50%;" />
+
+  아까와 또다른 형식의 부분 총계들을 볼 수 있습니다.
+
+  지금 연두색 부분을 보면 이번에는 생일 연도가 아닌 가입 연도를 기준으로 한 중간 규모의 부분 총계가 보입니다.
+
+  ***WITH ROLLUP**이 GROUP BY 뒤의 그루핑 기준들의 등장 순서에 맞춰서 부분 총계를 보여준다는 말, 무슨 뜻인지 아시겠죠?*
+
+  **2. NULL임을 나타내기 위해 쓰인 NULL vs. 부분 총계을 나타내기 위해 쓰인 NULL**
+
+  방금 전 SQL 문을 수정해볼게요. 그루핑 기준으로 생일 연도(b_year) 대신 회원이 사는 주요 지역명을 넣어볼게요. 실행 결과를 보면,
+
+  <img src="./resources/1_200.png" alt="1_192" style="zoom:50%;" />
+
+  우리의 예상대로 부분 총계들이 잘 보입니다.
+
+  그런데 지금 자세히 보면 그림에 보이는 주황색 NULL은 부분 총계를 나타내는 row가 아닙니다. 그냥 **애초에 region 컬럼에 NULL이 들어있던 row들의 그룹**을 나타내고 있는 것 뿐인데요.
+
+  부분 총계는(가입 연도가 2019년이고 남성 회원이며, 주요 지역을 따지지 않은 부분 총계)를 나타내는 것은 하늘색 NULL입니다.
+
+  자, 여기서 한 가지 문제가 있다는 걸 눈치채셨을 겁니다.
+
+  우리가 NULL을 보았을 때
+
+  (1) 이게 원래 있는 NULL을 나타내는 건지,
+
+  (2) 부분 총계임을 나타내기 위해 쓰인 NULL인 건지
+
+  구분할 수가 없다는 거죠. 그런데 이 둘을 구분할 수 있게 해주는 함수가 있는데요. 바로 **GROUPING**이라는 함수입니다.
+
+  SQL 문을 아래와 같이 수정해볼게요. **각 그루핑 기준을 GROUPING이라는 함수의 인자로 넣은 3개의 컬럼**들을 추가했습니다. 
+
+  <img src="./resources/1_201.png" alt="1_192" style="zoom:50%;" />
+
+  **GROUPING 함수는 그 인자를 그루핑 기준에서 고려하지 않은 부분 총계인 경우에 1을 리턴하고 그렇지 않은 경우 0을 리턴합니다.** 현재 보이는 노란색 박스와 연두색 박스들을 보면 어떤 말인지 이해하실 수 있을 겁니다.
+
+  그리고 방금 전 문제도 해결된 것이 보입니다. 지금 같은 NULL이더라도 원래 NULL이 있던 곳은 0이 출력되었고(분홍색 둥근 사각형), 부분 총계를 나타내기 위해 NULL이 쓰인 곳은 1이 출력되었습니다.(연두색 둥근 사각형) 
+
+  정리하면, GROUPING 함수는,
+
+  (1) 실제로 NULL을 나타내기 위해 쓰인 NULL인 경우에는 0,
+
+  (2) 부분 총계를 나타내기 위해 표시된 NULL은 1
+
+  을 리턴해서 둘을 구분하게 해주는 함수입니다.
+
+  현재 결과의 마지막 줄을 보면 
+
+  <img src="./resources/1_202.png" alt="1_192" style="zoom:50%;" />
+
+  이렇게 전체 총계를 나타내는 row에서는 모든 GROUPING 함수가 1을 리턴했다는 것을 알 수 있습니다. 전체 총계는 모든 그루핑 기준들을 무시한 채 계산된 값이기 때문에 당연한 결과죠?
+
+  만약 WITH ROLLUP을 썼을 때, 이 NULL이
+
+  (1) 실제로 NULL을 나타내기 위해서 쓰인 건지,
+
+  (2) 부분 총계를 나타내기 위해 쓰인 건지
+
+  구분하고 싶다면 GROUPING 함수를 사용해보세요. 
