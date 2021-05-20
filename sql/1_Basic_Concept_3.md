@@ -735,6 +735,12 @@
 
 - #### 그룹핑해서 보기 3
 
+  > 근데 여기서 한가지 이슈가 있음. 사실은 실행 방식 자체가, HAVING이 SELECT보다 먼저 실행됨. 그래서, 사실은 HAVING에서 alias를 못쓰는게 정상인데, 여기서는 사용함. 
+  >
+  > 현우의 답변은, 
+  >
+  > 만든놈이 알아서 잘 짰겠지. 
+
   이 중에 특정 그룹만 보고 싶다면 어떻게 할까?
 
   **having**은 해당 그룹을 선별하는 것. 
@@ -742,12 +748,12 @@
   ```sql
   SELECT 
   	SUBSTRING(address, 1, 2)  as region,
-      gender,
-      COUNT(*)
+    gender,
+    COUNT(*)
   FROM copang_main.member 
   GROUP BY 
   	SUBSTRING(address, 1, 2), 
-      gender
+    gender
   HAVING region ='서울';
   
   ```
@@ -756,16 +762,16 @@
 
   ```sql
   SELECT 
-  	SUBSTRING(address, 1, 2)  as region,
-      gender,
-      COUNT(*)
+  	SUBSTRING(address, 1, 2) as region,
+    gender,
+    COUNT(*)
   FROM copang_main.member 
   GROUP BY 
   	SUBSTRING(address, 1, 2), 
       gender
   HAVING 
   	region ='서울' 
-      AND gender='m';
+    AND gender='m';
   ```
 
   그런데 왜 where는 안쓰지? 
@@ -801,13 +807,13 @@
   FROM copang_main.member 
   GROUP BY 
   	SUBSTRING(address, 1, 2), 
-      gender
+    gender
   HAVING 
   	region IS NOT NULL 
-      AND gender='m'
+    AND gender='m'
   ORDER BY 
   	region ASC, 
-      gender DESC;
+    gender DESC;
   ```
 
 - #### GROUP BY를 쓸 때, 지켜야 하는 규칙
