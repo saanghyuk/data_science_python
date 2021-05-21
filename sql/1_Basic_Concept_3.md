@@ -1179,3 +1179,8 @@ ORDER BY region ASC, gender DESC;
   (2) 부분 총계를 나타내기 위해 쓰인 건지
 
   구분하고 싶다면 GROUPING 함수를 사용해보세요. 
+
+
+
+#### 
+

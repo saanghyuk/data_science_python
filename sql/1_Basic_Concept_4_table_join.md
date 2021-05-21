@@ -401,9 +401,9 @@
   ```sql
   SELECT 
   	i.id,
-      i.name,
-      s.item_id,
-      s.inventory_count
+    i.name,
+    s.item_id,
+    s.inventory_count
   FROM item AS i INNER JOIN stock AS s
   ON i.id = s.item_id
   ```
@@ -634,9 +634,9 @@
   ```sql
   SELECT 
   	old.id AS old_id,
-      old.name AS old_name,
-      new.id AS new_id,
-      new.name AS new_item
+    old.name AS old_name,
+    new.id AS new_id,
+    new.name AS new_item
   FROM copang_main.`item` AS old LEFT OUTER JOIN copang_main.`item-new` AS new
   ON old.id = new.id;
   ```
@@ -726,6 +726,10 @@
 
 - #### UNION더 알아보기
 
+  > UNION은 두 테이블(혹은 조회하는 컬럼)이 구조가 완전히 동일할때, 합집합을 구해준다. 모든 요소의 값이 동일하면 같은 원소로 취급하고 하나라도 다르면 다른 원소로 취급한다. 
+  >
+  > 이때, 모든 요소(모든 컬럼과 대응값)가 완전히 동일할 때는 UNION은 중복을 삭제하지만,  UNION ALL은 중복 삭제하지 않고 모두 보여준다. 
+
   이전 영상 후반에서 두 테이블의 합집합을 구해주는 집합 연산자인 **UNION**을 배웠습니다. UNION에 관해서 알아두면 좋은 2가지 사실이 있는데요. 하나씩 살펴볼게요. 
 
   **1. 서로 다른 종류의 테이블도, 조회하는 컬럼을 일치시키면 집합 연산이 가능합니다.** 
@@ -736,17 +740,23 @@
 
   **Winter_Olympic_Medal** : 국가별 동계 올림픽 메달 수 테이블 
 
+  
+
   ![1_239](./resources/1_244.png)
 
   **Summer_Olympic_Medal 테이블**
 
   이 테이블에는 **id(Primary Key), nation(국가), count(메달 수), year(올림픽 개최 연도)** 컬럼이 있습니다. 
 
+  
+
   ![1_239](./resources/1_245.png)
 
   **Winter_Olympic_Medal 테이블** 
 
   이 테이블에는 **id(Primary Key), nation(국가), count(메달 수), location(올림픽 개최 도시), first_rank_count(메달 획득 1위 국가의 메달 수)** 컬럼이 있습니다. 
+
+  
 
   저는 두 테이블을 **UNION 연산**해서 각 국가의 메달 획득 수를 한 눈에 보고 싶습니다. 
 
@@ -758,7 +768,7 @@
 
   ![1_239](./resources/1_246.png)
 
-  이렇게 에러가 나는 것을 볼 수 있습니다. 에러 메시지를 보면 두 테이블의 컬럼 수가 다르다는 메시지가 보입니다. 컬럼 구조가 달라서 UNION 연산이 실패한 거죠.
+  이렇게 에러가 나는 것을 볼 수 있습니다. 에러 메시지를 보면 *두 테이블의 컬럼 수가 다르다는 메시지가 보입니다.* 컬럼 구조가 달라서 UNION 연산이 실패한 거죠.
 
   하지만 **방법이 있습니다. SELECT 절 뒤의 \* 부분을 두 테이블이 공통적으로 갖고 있는 컬럼 이름들로 바꿔주면 됩니다.** 
 
@@ -766,7 +776,7 @@
 
   ![1_239](./resources/1_247.png)
 
-  이렇게 두 테이블의 해당 컬럼들만을 대상으로 UNION 연산이 된 것을 볼 수 있습니다. 방금 본 것처럼 두 테이블의 원래 컬럼 구조가 달라도, 두 테이블이 공통적으로 갖고 있는 컬럼들만 조회한 경우에는 UNION 같은 집합 연산을 수행할 수 있다는 사실, 잘 기억하세요. 
+  이렇게 두 테이블의 해당 컬럼들만을 대상으로 UNION 연산이 된 것을 볼 수 있습니다. 방금 본 것처럼 두 테이블의 원래 컬럼 구조가 달라도, **두 테이블이 공통적으로 갖고 있는 컬럼들만 조회한 경우에는 UNION 같은 집합 연산을 수행할 수 있다는 사실, 잘 기억하세요.** 
 
   (총 컬럼의 수와, 각 컬럼의 데이터 타입만 일치하면 UNION 연산이 가능합니다)
 
@@ -799,3 +809,381 @@
   방금 본 것처럼 UNION 연산과 UNION ALL 연산은 둘다 합집합을 구하되, 전자는 중복을 제거해서 보여주고, 후자는 그런 작업없이 두 테이블을 합친 결과를 그대로 보여준다는 차이가 있습니다. 
 
   만약 중복을 제거하고 깔끔하게 보는 것이 중요한 경우에는 UNION 연산자를 사용하고, 중복을 제거하게 되면 정보 누락이 발생할 수 있는 경우에는 UNION ALL 연산자를 사용하면 되겠죠? 여러분의 상황에 따라 적합한 연산자를 사용하시면 됩니다. 
+
+
+
+- #### 서로 다른 3개의 테이블 조인하기
+
+  사실은 더 많은 수의 테이블을 조인할 수 있음. 그리고, 그럴수록 더 의미있는 정보를 찾아내기도 좋겠지. 
+
+  일단 리뷰 테이블에는 pk인 Id와, 어떤 회원이 남긴 리뷰인지 식별하게 해주는 mem_id가 있음. mem_id는 member테이블의 Id와 관련되어 있겠지. 그리고, 어떤 상품에 관한 리뷰인지 식별할 수 있게 해주는 item_id컬럼도 있음(item테이블의 id컬럼과 관련). 그리고 별점을 나타내는 Star, 댓글을 나타내는 comment 컬럼이 있음. 
+
+  일단 리뷰 테이블에서 2개의 Foreign Key를 설정 가능. Foreign Key를 만들고 join을 해도 되지만, 만들지 않아도 join을 할 수 있음. 
+
+  ![1_239](./resources/1_251.png) 
+
+  이번에는 Foreign key만들고 바로 join을 해보자. 
+
+  ```sql
+  SELECT 
+  	i.name, i.id, 
+      r.item_id, r.star, r.comment, r.mem_id,
+      m.id, m.email 
+  FROM  
+  	item AS i 
+      LEFT OUTER JOIN review AS r
+  		ON r.item_id = i.id
+  	LEFT OUTER JOIN member AS m
+  		ON r.mem_id = m.id
+  ```
+
+  ![1_239](./resources/1_252.png)
+
+  ![1_239](./resources/1_253.png)
+
+  
+
+- #### 세 테이블의 조인 과정
+
+  **item**, **review**, **member** 이 세 테이블의 조인 과정에 관해서 알아야할 두 가지 사실을 설명해드리겠습니다.
+
+  **1. 두 개의 테이블을 참조하는 review 테이블**
+
+  잠깐 이전 영상에서 등장한 **review** 테이블을 살펴볼까요?
+
+  ![1_239](./resources/1_254.png)
+
+  review 테이블의 각 컬럼에 대해 다시 한번 정리해보겠습니다. 
+
+  **id** 컬럼 : Primary Key
+
+  **mem_id** 컬럼 : member 테이블의 id 컬럼을 참조하는 컬럼(어느 회원이 남긴 리뷰인지 확인 가능)
+
+  **item_id** 컬럼 : item 테이블의 id 컬럼을 참조하는 컬럼(무슨 상품에 관해 남긴 리뷰인지 확인 가능)
+
+  **star** 컬럼 : 회원이 준 별점
+
+  **comment** 컬럼 : 회원이 남긴 댓글 
+
+  이렇게 5개의 컬럼들이 있습니다. 
+
+  여기서 중요한 사실은
+
+  **review 테이블이 member 테이블도 참조하고 있고, item 테이블도 참조하고 있다는 점입니다.** 아래와 같이 말이죠.
+
+  (1) review(mem_id 컬럼) -> member(id 컬럼)
+
+  (2) review(item_id 컬럼) -> item(id 컬럼) 
+
+  그러니까
+
+  리뷰 하나가 있을 때, 누가 남겼는지 알고 싶으면 mem_id 컬럼을 통해 member 테이블을 참조하고, 어떤 상품에 관한 리뷰인지 알고 싶으면 item_id 컬럼을 통해 item 테이블을 참조하면 됩니다.
+
+  그리고 이것들을 한번에 보려면 이전 영상처럼 세 테이블을 모두 조인하면 되구요.
+
+  실무에서 방금 본 review 테이블처럼, 한 개 이상의 다른 테이블을 참조하는 테이블을 만나게 되더라도 당황하지 마세요.
+
+  **2. 1:1 관계 , 1:n 관계**
+
+  이전 영상에서 했던 세 테이블의 조인 결과를 보면, 아래 그림과 같습니다.
+
+  ![1_239](./resources/1_255.png)
+
+  그런데 지금 가장 왼쪽에 동일한 상품 이름이 여러 번 등장하는 것을 볼 수 있죠? 왜 그런 걸까요? 
+
+  이 부분이 자연스럽게 이해되지 않는 분들을 위해 설명하겠습니다. 
+
+  현재 각 테이블은 다음 개체의 정보들을 나타내고 있습니다. 
+
+  **item - 상품 / review - 리뷰 / member - 회원**
+
+  여기서 잠깐, **'상품' 과 '리뷰'의 관계**를 생각해봅시다. **하나의 상품에는, 여러 개의 리뷰가** 달릴 수 있는데요. 이런 걸 **1:n 관계**라고 합니다. 그래서 item 테이블을 기준으로 review 테이블을 LEFT OUTER JOIN하면 하나의 상품에 여러 개의 리뷰를 연결해서 표현해줘야 합니다. 그래서 위 그림처럼 하나의 상품에 대해서, 그 id 값과 일치하는 item_id 값을 가진 리뷰라면 모두 연결이 되어, 동일한 상품 이름이 여러 번 표시된 것입니다.
+
+  이 모습은 [이전 영상](https://www.codeit.kr/learn/courses/sql-database/3212)에서 우리가 item 테이블과 stock 테이블을 조인했을 때와는 조금 다른 모습인데요. 그 때는 **하나의 상품이, 한 건의 재고 수 정보를 갖는 1:1 관계였기 때문에** 동일한 상품 이름이 여러 번 등장하는 일은 없었습니다. 하지만 **'상품'과 '리뷰'처럼 1:n 관계인 경우에는 조인을 할 때 1:n 중 1에 해당하는 테이블의 row는 위 그림처럼 조인 결과에서 여러 번 중복 등장할 수 있게 되는 겁니다.**
+
+  왜 위 그림처럼 같은 상품 이름이 여러 번 등장했는지 아시겠죠?
+
+
+
+- #### 의미있는 데이터 추출하기1
+
+  결과테이블에서 유의미한 결과를 추출해 보자. 
+
+  **보니깐, GROUP BY를 쓸때 나한테 나오는 오류는 99%가 SELECT 뒤 추출하는 컬럼의 문제.** 
+
+  **그룹마다 하나씩만 나오게 할 수 있는 컬럼이 아니면 오류남.** 
+
+  
+
+  *코팡의 상품들 중에서, 별점의 평균값을 기준으로 했을 때, 여성 회원들이 가장 좋은 평가를 해준 상품은 무엇일까?* 
+
+  A. 일단 member table의 gender가 f인 컬럼들만 추려보자. 
+
+  ```sql
+  SELECT 
+  	*
+  FROM  
+  	item AS i 
+      LEFT OUTER JOIN review AS r
+  		ON r.item_id = i.id
+  	LEFT OUTER JOIN member AS m
+  		ON r.mem_id = m.id
+  WHERE m.gender = 'f'
+  ```
+
+  ```sql
+  SELECT 
+  	i.id,
+      i.name,
+      AVG(r.star)
+  FROM  
+  	item AS i 
+      LEFT OUTER JOIN review AS r
+  		ON r.item_id = i.id
+  	LEFT OUTER JOIN member AS m
+  		ON r.mem_id = m.id
+  WHERE m.gender = 'f'
+  GROUP BY i.id
+  ORDER BY AVG(r.star) DESC
+  ```
+
+  ![1_239](./resources/1_256.png)
+
+
+
+- #### 의미있는 데이터 추출하기2
+
+  근데 만점을 받은 상품이 너무 많아. 별점 평균 뿐만 아니라, 리뷰의 갯수도 같이 확인해보자. 
+
+  ```sql
+  SELECT 
+  	i.id,
+      i.name,
+      AVG(r.star),
+      COUNT(*)
+  FROM  
+  	item AS i 
+      LEFT OUTER JOIN review AS r
+  		ON r.item_id = i.id
+  	LEFT OUTER JOIN member AS m
+  		ON r.mem_id = m.id
+  WHERE m.gender = 'f'
+  GROUP BY i.id
+  ORDER BY AVG(r.star) DESC
+  ```
+
+  여기서 그냥 COUNT(*)하면 어떤 일이 벌어질까?
+
+  일단, SELECT은 보고싶은것만 정하는 거고 JOIN을 하면서 1 :n 관계로 묶인 표가 생긴 거야. 그리고, GROUP BY를 하면 그 그룹마다 ROW들이 각각 들어가 있는거고. 
+
+  그러면 COUNT(*)를 하면 각각 그룹에 들어가있는 REVIEW의 수를 세는 거랑 똑같지 뭐. 
+
+  ![1_239](./resources/1_257.png)
+
+  잘 보면 5점인 애들은 싹다 1명만 평가했어. 1명인데 평균 5점이라고 해서, 인기 많다고 생각하기가 어려움. 이런 것을 방지하기 위해, GROUP BY 하고  ROW의 갯수를 살펴보는 습관을 갖는게 중요함. 
+
+  그럼 이제, 리뷰수가 2개 이상인 곳만 보고 싶다고 해보자. 
+
+  거기다가 + 로 같은 별점 평균 값이라면, COUNT가 높은 것을 위로 올리자. 
+
+  ```sql
+  SELECT 
+  	i.id,
+      i.name,
+      AVG(r.star),
+      COUNT(*)
+  FROM  
+  	item AS i 
+      LEFT OUTER JOIN review AS r
+  		ON r.item_id = i.id
+  	LEFT OUTER JOIN member AS m
+  		ON r.mem_id = m.id
+  WHERE m.gender = 'f' 
+  GROUP BY i.id 
+  HAVING COUNT(*) >= 2
+  ORDER BY AVG(r.star), COUNT(*) DESC
+  ```
+
+  ![1_239](./resources/1_258.png)
+
+  
+
+  이번에는 남성 회원들이 가장 좋게 평가한 상품을 알고 싶다면?
+
+  ```sql
+  SELECT 
+  	i.id,
+      i.name,
+      AVG(r.star),
+      COUNT(*)
+  FROM  
+  	item AS i 
+      LEFT OUTER JOIN review AS r
+  		ON r.item_id = i.id
+  	LEFT OUTER JOIN member AS m
+  		ON r.mem_id = m.id
+  WHERE m.gender = 'm' 
+  GROUP BY i.id 
+  HAVING COUNT(*) >= 2
+  ORDER BY AVG(r.star), COUNT(*) DESC
+  ```
+
+  ![1_239](./resources/1_259.png)
+
+  꼴지 상품의 리뷰를 살펴보자. 
+
+  ```sql
+  SELECT * FROM copang_main.review WHERE item_id = 2;
+  ```
+
+  ![1_239](./resources/1_260.png)
+
+
+
+
+
+- #### 다른 종류의 조인들
+
+  이때까지 배운 내용을 한번 정리해볼까요?
+
+  두 테이블을 서로 합치는 연산에는 크게 두 가지 종류가 있다고 했습니다. 
+
+  첫 번째는 두 테이블을 가로 방향으로 합치는 것에 관한 **결합** 연산, 
+
+  두 번째는 두 테이블을 세로 방향으로 합치는 것에 관한 **집합** 연산 
+
+  이라고 했는데요. 
+
+  **결합 연산** 중에서는 LEFT OUTER JOIN, RIGHT OUTER JOIN, INNER JOIN 
+
+  **집합 연산** 중에서는 INTERSECT, MINUS, UNION, UNION ALL
+
+  을 배웠습니다. 이때 집합 연산 중 INTERSECT, MINUS 연산자는 MySQL에서 지원하지 않아서, 조인을 통해 간접적으로 원하는 결과를 얻었던 거, 기억나시죠? 
+
+  이번 노트에서는 우리가 배우지 않았던 조인 종류들을 배워보겠습니다. 이전에 배운 것들에 비해 실무적으로 활용도는 떨어지지만, 알아두고 있으면 좋은 내용이라서 소개하겠습니다. 혹시라도 현장에서 일을 하다가 이번 노트에서 나온 조인을 들었는데 모르는 상태면 안 될 테니까요. 
+
+  하나씩 순서대로 소개하겠습니다. 
+
+  **1. NATURAL JOIN**
+
+  아래와 같이 축구 선수 정보가 담긴 player 테이블과 축구팀 정보가 담긴 team 테이블이 있다고 해봅시다. 
+
+  ![1_239](./resources/1_261.png)
+
+  지금 두 테이블에는 team_name이라는, 같은 이름의 컬럼이 있는데요. 이 두 컬럼을 기준으로 조인을 하면 축구 선수가 속한 축구팀과 축구팀의 기반 지역을 한눈에 볼 수 있을 것 같습니다. 두 테이블을 INNER JOIN 해보겠습니다. 
+
+  ![1_239](./resources/1_262.png)
+
+  우리가 예상한 대로 조인이 잘 됩니다. 
+
+  그런데 이런 식의 조인도 가능합니다. 
+
+  ![1_239](./resources/1_263.png)
+
+  저는 **INNER JOIN이라고 쓴 부분을 NATURAL JOIN으로 바꾸었고, 조인 조건을 나타내는 3N 절을 아예 삭제해버렸는데요.** NATURAL JOIN이 뭘까요? *NATURAL JOIN은 두 테이블에서 같은 이름의 컬럼을 찾아서 자동으로 그것들을 조인 조건을 설정하고, INNER JOIN을 해주는 조인입니다.* 우리말로는 자연 조인이라고도 하는데요.
+
+  이때까지 조인을 할 때마다 조인 조건을 설정했던 것과는 달리 NATURAL JOIN은 조인 조건을 자동으로 설정해주기 때문에 ON 절을 쓸 필요가 없습니다. 단어 뜻 그대로 별도의 조인 조건 설정 없이, **자연**스럽게 진행되는 조인인 거죠. 
+
+  사실 두 테이블에 같은 이름의 컬럼이 있더라도 NATURAL JOIN을 쓰기보다는 우리가 배운 조인을 쓰고 ON 절에 조인 조건을 명시해주는 것이 좋습니다. NATURAL JOIN을 해버리면 SQL 문을 보더라도, **테이블 구조를 모르는 사람이라면 어떤 컬럼들을 기준으로 조인이 될지 알 수 없으니까요.** 하지만 NATURAL JOIN이 사용된 SQL 문을 만나게 되면, 해석할 수 있어야하기 때문에 알려드리는 겁니다. 
+
+  ***자연 조인은 테이블간에 동일한 형식을 갖는 공통 컬럼이 반드시 하나만 존재해야 한다. 두개가 존재해서, 뭘 기준으로 잡아야 되는지 모를것 같으면 바로 에러***
+
+  **2. CROSS JOIN** 
+
+  CROSS JOIN은 한 테이블의 하나의 row에 다른 테이블의 모든 row들을 매칭하고, 그 다음 row에서도 또, 다른 테이블의 모든 row들을 매칭하는 것을 반복함으로써 두 테이블의 row들의 모든 조합을 보여주는 조인입니다. 잠깐 아래 그림을 보세요.
+
+  ![1_239](./resources/1_264.png)
+
+  지금 member 테이블과 stock 테이블을 CROSS JOIN 했습니다. 그랬더니
+
+  codeit@naver.com 회원을 나타내는 row에 stock 테이블의 모든 row들이 매칭되어서 표시되었죠? 그리고 그 아래에는 또 그 다음 회원에 대해서 같은 작업을 한 결과가 표시되고, 그 다음에는 또 그런 결과가 표시되는 식으로 해서 두 테이블의 row들의 모든 조합이 표시됩니다. 테이블 하나를 잠깐 하나의 집합이라고 생각해봅시다. 그럼 각 row는 하나의 원소가 되겠죠? 방금처럼 두 집합의 모든 원소들의 조합을 나타내는 것을 수학의 집합 이론에서는 카르테시안 곱(**Cartesian Product**)이라고 하는데요. CROSS JOIN은 두 테이블의 Cartesian Product를 구하는 조인인 겁니다. 
+
+  이 CROSS JOIN은 어떤 경우에 사용할 수 있을까요? 예를 들어, 여러 종류의 의류들 중에서도 상의들의 정보가 담긴 테이블, 하의들의 정보가 담긴 테이블이 있다고 해봅시다. 이때, 옷을 입을 때의 상-하의 조합들을 한눈에 보고싶은 경우에 CROSS JOIN을 사용하면 되겠죠? 하지만 일반적인 경우에는 잘 쓸 일이 없는 종류의 조인이기는 합니다. 
+
+  **3. SELF JOIN** 
+
+  SELF JOIN은 조인 방식에 있어서 새로운 조인은 아닙니다. SELF JOIN은 셀프라는 단어의 뜻 그대로 테이블이 자기 자신과 조인을 하는 경우를 말합니다. SELF JOIN이라고 해서 헷갈릴 필요는 없습니다. 그냥 서로 별개인 두 테이블을 조인하는 것처럼 생각하시면 되는데요. 어떤 경우에 이런 조인이 필요할까요? 아래 그림을 보세요. 
+
+  ![1_239](./resources/1_265.png)
+
+  지금 저는 member 테이블을 SELF JOIN 하고 있습니다. 지금 같은 테이블이기 때문에 그 이름 구별을 하기 위해서 각각 다른 alias(m1, m2)를 주었습니다. 그리고 두 테이블의 age 컬럼을 조인 기준으로 해서 LEFT OUTER JOIN을 했죠? 그 결과를 보니 어떤가요. 
+
+  지금 각 회원마다 자신과 동갑인 다른 회원들(본인 포함)이 함께 출력되는 것을 알 수 있습니다. 예를 들어 codeit@naver.com 회원이 지금 28살인데 동갑인 회원으로 captainGOGO03@~, pooh_man@~ 회원이 있다는 것을 알 수 있네요. 이렇게 SELF JOIN을 통해 하나의 테이블 안에서 다양한 정보들을 추출해볼 수 있습니다.
+
+  또다른 예시를 살펴볼까요?
+
+  ![1_239](./resources/1_266.png)
+
+  지금 보면 employee라는 테이블에 id(Primary key), name(직원의 이름), department(소속 부서), boss(직속 상사의 id 값) 컬럼이 있습니다. 지금 boss 컬럼의 값들은 결국 같은 테이블의 id 컬럼에 있는 값들 중 하나인데요. 어떤 직원의 직속 상사도 당연히 그 회사의 직원일 테니까 당연한 겁니다.
+
+  이 상태에서 잠깐 SELF JOIN을 해볼게요. 
+
+  ![1_239](./resources/1_267.png)
+
+  employee 테이블의 boss 컬럼과 id 컬럼을 기준으로 LEFT OUTER JOIN인 SELF JOIN을 했더니 각 직원 옆에 직속 상사 정보도 함께 뜨죠? 
+
+  이 결과에서 같은 방식으로 한번 더 SELF JOIN을 해볼게요. 
+
+  ![1_239](./resources/1_268.png)
+
+  LEFT OUTER JOIN인 SELF JOIN을 한번 더 하니까, 한 직원의, 직속 상사의, 직속 상사까지도 볼 수가 있습니다. 결과를 보니 경영관리부의 '서종민'이라는 분이 CEO인 것 같네요. 직속 상사 정보가 없고, 다른 직원들 입장에서 가장 멀리 있는 직속 상사인 걸 보니까 말이죠. 
+
+  방금 본 것처럼 SELF JOIN은 조인 방식에 있어서 뭔가 새로운 조인은 아닙니다. 다만, 조인 대상이 같은 테이블을 마치 별도의 테이블인 것처럼 간주하고 진행된다는 점에서 특색이 있는 조인인데요. 
+
+  방금 보신 것처럼 SELF JOIN을 하면 하나의 테이블에 담긴 데이터를 다양한 관점에서 바라볼 수 있게 됩니다. 
+
+  **4. FULL OUTER JOIN** 
+
+  FULL OUTER JOIN은 뭘까요? 우리는 LEFT OUTER JOIN과, RIGHT OUTER JOIN을 배웠습니다. 둘다 왼쪽이나 오른쪽에 있는 테이블 하나를 기준으로 두고 상대 테이블을 조인하는 거였죠? 
+
+  **FULL OUTER JOIN은 두 테이블의 LEFT OUTER JOIN 결과와 RIGHT OUTER JOIN 결과를 합치는 조인**입니다. 대신, 이때 두 결과에 모두 존재하는 row들(두 테이블에 공통으로 존재하던 row들)은 한번만 표현해주죠.
+
+  ![1_239](./resources/1_269.png)
+
+  위에서 Natural Join을 배울 때 봤던 이 두 테이블을 FULL OUTER JOIN 해보겠습니다. 
+
+  ![1_239](./resources/1_270.png)
+
+  위 SQL 문, 이해되시나요? 지금 하늘색 영역이 LEFT OUTER JOIN 부분이고, 그 결과입니다. 그리고 빨간색 영역이 RIGHT OUTER JOIN 부분이고, 그 결과이구요. 이 둘을 UNION ALL한 결과인데요. 두 결과가 그대로 잘 합쳐졌습니다. 그런데 지금 이 결과를 보면 
+
+  ![1_239](./resources/1_271.png)
+
+  서로 겹치는 row들이 보입니다. id 컬럼을 보면 개수가 2개인 row들이 보이는데요. 이런 중복 row들은 제거하고 하나만 보이도록 해볼게요. 어떻게 하면 될까요? [이전 노트에서 배운대로](https://www.codeit.kr/learn/3256) UNION ALL 대신 UNION을 사용하시면 됩니다. 
+
+  ![1_239](./resources/1_272.png)
+
+  그럼 이렇게 중복이 제거된 결과가 나타납니다. 이 결과가 바로 FULL OUTER JOIN의 결과인데요. 앞으로 FULL OUTER JOIN이라는 말을 들으면 방금 전 설명을 기억하세요. 
+
+  참고로, Oracle이라는 DBMS에서는 FULL OUTER JOIN을 바로 할 수 있도록 해주는 연산자가 내장되어 있습니다. 그래서 
+
+  For Oracle Code
+
+  ```sql
+  SELECT * 
+  FROM player AS p FULL OUTER JOIN team AS t
+  ON p.team_name = t.team_name;
+  ```
+
+  이라고만 써도, 위와 같은 결과를 볼 수 있습니다. 
+
+  **5. Non-Equi 조인** 
+
+  자, 마지막으로 이때까지 우리가 살펴봤던 조인과는 전혀 다른 성격의 조인을 살펴보겠습니다. 이때까지 우리는 조인 조건을 설정할 때 두 컬럼의 값이 같은지를 기준으로 했습니다. **즉, 조인 조건에 항상 등호(=)를 사용해왔죠.** 
+
+  그런 조인들은 **Equi 조인**이라고 합니다. Equi는 Equality Condition의 줄임말로 동등 조건을 의미합니다. 이때까지 우리가 해온 조인은 모두 동등 조건을 판단하는 Equi 조인이었습니다. 
+
+  하지만 동등 조건이 아닌 다른 종류의 조건을 사용해서 조인을 할 수도 있는데요. 이런 조인을 **Non-Equi 조인**이라고 합니다. 바로 그 예를 보여드릴게요. 
+
+  ![1_239](./resources/1_273.png)
+
+  지금 저는 member 테이블과 item 테이블을 LEFT OUTER JOIN 했습니다. 그런데 ON 뒤의 조인 조건을 보니 뭔가 좀 이상하죠? **등호가 아니라 부등호(<)가 들어있는데요.** 
+
+  실행결과를 보면 member 테이블의 sign_up_day(회원의 사이트 가입일)보다 더 이후인 registration_date(상품이 사이트에 등록된 날)을 가진 item들이 연결되었습니다. 이 결과를 보면, 특정 회원이 가입한 이후에 사이트에 올라온 상품들이 무엇인지 확인할 수 있는데요. 좀더 스크롤을 내려볼게요.
+
+  ![1_239](./resources/1_274.png)
+
+  지금 가장 최근에 가입한 두 회원 이후로는 새롭게 사이트에 올라온 상품들은 없는 상태라는 걸 알 수 있습니다. 2019년 11월 23일 이후로는 사이트에 새롭게 올라온 상품들이 없네요. 
+
+  **Non-Equi 조인**이 뭔지 잘 이해되시나요? 사실 Non-Equi 조인은 Equi 조인만큼 보편적으로 사용되지는 않지만 방금 본 것처럼 특정 조건에서는 충분히 유용하게 사용될 수 있는 조인이기 때문에 알아두시는 게 좋습니다. 그리고 Non-Equi 조인에서는 방금 본 부등호 말고도 다양한 조건 표현식이 사용될 수 있는데요. 이 부분은 Non-Equi 조인이라고 검색해서 직접 찾아보시길 추천합니다.
+
+  이제 Non-Equi 조인이라는 게 있다는 걸 알게 됐으니까, 나중에 ON절에서 등호(=)가 없는 조건 표현식을 보더라도 당황하지 마세요! 
