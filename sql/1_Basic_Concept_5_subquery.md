@@ -8,13 +8,11 @@
   SELECT 
   	i.id, 
   	i.name, 
-      AVG(star) AS avg_star
+    AVG(star) AS avg_star
   FROM item AS i LEFT OUTER JOIN review AS r
   ON r.item_id = i.id
   GROUP BY i.id, i.name
   ORDER BY avg_star DESC;
-  
-  
   ```
 
   ![1_275](./resources/1_275.png)
@@ -47,7 +45,7 @@
   SELECT 
   	i.id, 
   	i.name,
-      AVG(star) AS avg_star
+    AVG(star) AS avg_star
   FROM item AS i LEFT OUTER JOIN review AS r
   ON r.item_id = i.id
   GROUP BY i.id, i.name
@@ -113,8 +111,8 @@
   SELECT 
   	id, 
   	name, 
-      price,
-      (SELECT MAX(price) FROM item) AS 'MAX PRICE'
+    price,
+    (SELECT MAX(price) FROM item) AS 'MAX PRICE'
   FROM copang_main.item;
   ```
 
@@ -177,9 +175,9 @@
   ```Sql
   SELECT 
   	i.id, 
-      COUNT(*)
+    COUNT(*)
   FROM item AS i
-  		LEFT OUTER JOIN review AS r
+  LEFT OUTER JOIN review AS r
   ON i.id = r.item_id
   GROUP BY i.id HAVING COUNT(*)>3
   ```
@@ -302,4 +300,101 @@
   | 40   | 16     | 3       | 4    | 괜찮네요, 친구도 이거 샀더라구요 ㅋㅋ                        |
   | 45   | 18     | 1       | 4    | 질감이 괜찮네요, 패턴 제가 따로 입혀서 입고 다니고 있어요    |
   | 47   | 19     | 1       | 5    | 좋아요~! 계절별로 하나씩 이런 느낌의 옷 있으면 좋겠어요, 두께감만 다르게 해서요 |
+
+
+
+- #### FROM 절에 있는 서브쿼리
+
+  지금까지 하나의 값을 리턴하거나, 하나의 컬럼에 해당되는 값을 리턴하는 서브쿼리를 사용했음. 그런데 그 외에도, 아래처럼 여러개의 컬럼에 여러개의 값이 리턴되는 형태로도 활용이 가능함.  
+
+  ![1_275](./resources/1_292.png)
+
+  ```sql
+  SELECT 
+  	SUBSTRING(address, 1, 2) AS region, 
+      COUNT(*) AS review_count
+  FROM review AS r LEFT OUTER JOIN member AS m
+  ON r.mem_id = m.id 
+  GROUP BY SUBSTRING(address, 1, 2);
+  ```
+
+  ![1_275](./resources/1_293.png)
+
+  *굳이 따지자면, 위의 코드는 지역 별, 리뷰의 갯수겠지.* 
+
+  근데 위에 보면, region컬럼에 있는 Null과 안드는 제외시켜야겠지. 
+
+  ```sql
+  SELECT 
+  	SUBSTRING(address, 1, 2) AS region, 
+      COUNT(*) AS review_count
+  FROM review AS r LEFT OUTER JOIN member AS m
+  ON r.mem_id = m.id 
+  GROUP BY SUBSTRING(address, 1, 2)
+  HAVING region IS NOT NULL
+  	AND region != '안드';
+  ```
+
+  ![1_275](./resources/1_294.png)
+
+  이제 이 SQL문을 하나의 서브쿼리로 만들어 보자. 
+
+  ```sql
+  SELECT 
+  	AVG(review_count)
+  FROM 
+  (SELECT 
+  	SUBSTRING(address, 1, 2) AS region, 
+      COUNT(*) AS review_count
+  FROM review AS r LEFT OUTER JOIN member AS m
+  ON r.mem_id = m.id 
+  GROUP BY SUBSTRING(address, 1, 2)
+  HAVING region IS NOT NULL
+  	AND region != '안드');
+  ```
+
+  이렇게 하려고 했더니 에러가 남. 
+
+  **Error Code: 1248. Every derived table must have its own alias**
+
+  지금 ()안 처럼 서브쿼리로 탄생한 테이블을 **derived table**이라고 부름. 
+
+  이런 Derived테이블 자체에 반드시 alias가 붙어 있어야 함. 
+
+  *아래처럼*
+
+  ```sql
+  SELECT 
+  	AVG(review_count)
+  FROM 
+  (SELECT 
+  	SUBSTRING(address, 1, 2) AS region, 
+      COUNT(*) AS review_count
+  FROM review AS r LEFT OUTER JOIN member AS m
+  ON r.mem_id = m.id 
+  GROUP BY SUBSTRING(address, 1, 2)
+  HAVING region IS NOT NULL
+  	AND region != '안드') AS review_count_summary;
+  ```
+
+  최대, 최소 리뷰 갯수까지 구하면?
+
+  ```sql
+  SELECT 
+  	AVG(review_count),
+      MAX(review_count),
+      MIN(review_count)
+  FROM 
+  
+  (SELECT 
+  	SUBSTRING(address, 1, 2) AS region, 
+      COUNT(*) AS review_count
+  FROM review AS r LEFT OUTER JOIN member AS m
+  ON r.mem_id = m.id 
+  GROUP BY SUBSTRING(address, 1, 2)
+  HAVING region IS NOT NULL
+  	AND region != '안드') AS review_count_summary;
+  ```
+
+  
 
