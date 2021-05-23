@@ -478,7 +478,20 @@
 
   꼭 Foreign Key가 아니더라도 서로 연관있는 컬럼을 기준으로 조인을 하는 경우도 많습니다. 이 사실을 꼭 기억하세요.
 
+  **중요**
 
+  INNER JOIN시 아래처럼 가능함. 
+
+  ```sql
+  SELECT 
+  	MAX(copang_report.price) 
+  	AS max_price, AVG(copang_report.star) AS avg_star, 	
+  	COUNT(DISTINCT(copang_report.email)) AS distinct_email_count 
+  
+  FROM (SELECT price, star, email FROM item AS i INNER JOIN review AS r ON r.item_id = i.id INNER JOIN member AS m ON r.mem_id = m.id) AS copang_report;
+  ```
+
+  
 
 - #### 결합연산과 집합연산
 
