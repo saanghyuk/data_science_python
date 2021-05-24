@@ -540,7 +540,7 @@
 
   이런 식으로 
 
-  ```
+  ```sql
   UPDATE final_exam_result SET score = 100 WHERE id = 1;
   UPDATE final_exam_result SET score = 63 WHERE id = 2;
   UPDATE final_exam_result SET score = 18 WHERE id = 3;
@@ -647,3 +647,5 @@
   정기적으로 물리 삭제하는 방법을 활용하기도 합니다. 
 
   나중에 실무에서 여러분의 회사에서는 어떤 식으로 삭제 정책을 운영하고 있는지 한번 살펴보세요. 
+
+- 
