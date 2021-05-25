@@ -474,5 +474,126 @@
       CHECK (email LIKE '%@%'  AND gender IN ('m', 'f')); 
   ```
 
-  
+  ```sql
+  INSERT INTO student (name, registration_number, email, gender)
+  	VALUES('김준성', 20130827, '^hi g', 'm')
+  ```
 
+  >Error Code: 3819. Check constraint 'st_rule' is violated.
+
+  ```sql
+  INSERT INTO student (name, registration_number, email, gender)
+  	VALUES('김준성', 20130827, 'a@naver.com', 'z')
+  ```
+
+  > Error Code: 3819. Check constraint 'st_rule' is violated.
+
+
+
+- #### 그 밖의 컬럼 관련 작업들
+
+  이때까지 컬럼을 추가/삭제하거나 기존 컬럼의 이름, 데이터 타입, 속성 등을 변경하는 법을 배웠는데요. 그 밖에 알아야할 컬럼 관련 작업들을 배워보겠습니다. 
+
+  지금 아래와 같이 한 축구팀의 선수 정보를 관리하는 **player_info 테이블**이 있다고 해봅시다.
+
+  <img src="./resources/2_54.png" alt="2_26"/>
+
+  각 컬럼에 대해 설명하자면,
+
+  **role** : 선수의 역할(공격수, 수비수 등)
+
+  **name** : 선수의 이름
+
+  **id** : PRIMARY KEY
+
+  입니다. 이 테이블의 컬럼 구조를 좀더 보기 좋게 만들어가면서 새로운 내용들을 배워봅시다. 
+
+  **1. 컬럼 가장 앞으로 당기기**
+
+  지금 보면 Primary Key 역할을 하는 id 컬럼이 가장 뒤에 있어서 보기가 어색하네요. 이 컬럼을 가장 앞으로 옮기고 싶은데 어떻게 하면 좋을까요? 
+
+  이렇게 써주면 됩니다. 
+
+  <img src="./resources/2_55.png" alt="2_26"/>
+
+  우리가 배웠던 MODIFY 문이죠? id 컬럼 정보의 맨 뒤에 FIRST라고 써주면, 해당 테이블의 가장 첫 번째 컬럼이 됩니다. player_info 테이블을 다시 조회해보면, 
+
+  <img src="./resources/2_56.png" alt="2_26"/>
+
+  id 컬럼이 가장 첫번째 컬럼이 된 것을 알 수 있습니다. 이런 식으로 테이블에서는 보통 Primary Key에 해당하는 컬럼을 가장 앞에 두는 것이 일반적입니다. 
+
+  **2. 컬럼 간의 순서 바꾸기**
+
+  그런데 지금 보면 선수 역할을 나타내는 role 컬럼이 선수 이름을 나타내는 name 컬럼보다 이후에 나오는 것이 더 자연스러울 것 같네요. role 컬럼을 name 컬럼 이후에 위치하도록 하려면 이렇게 써주면 됩니다. 
+
+  <img src="./resources/2_57.png" alt="2_26"/>
+
+  이번에도 MODIFY를 썼는데요. 그리고 가장 마지막에 **AFTER name**이라고 썼습니다. 표현 그대로 name 컬럼 바로 다음으로 위치를 바꾸라는 말인데요. 이 SQL 문을 실행하고 다시 보면
+
+  <img src="./resources/2_58.png" alt="2_26"/>
+
+  컬럼의 순서가 잘 바뀐 것을 알 수 있습니다. 
+
+  **3. 컬럼의 이름과 컬럼의 데이터 타입 및 속성 동시에 수정하기**
+
+  우리는 이전 영상에서 
+
+  컬럼의 이름을 수정할 때는 **RENAME COLUMN A TO B** 절을, 
+
+  컬럼의 타입 및 속성을 수정할 때는 **MODIFY** 절을 사용한다고 배웠습니다. 
+
+  그런데 이 두 가지 성격의 작업을 한번에 수행해주는 절이 있습니다. 바로 **CHANGE** 인데요. 
+
+  현재 테이블에서 role이라는 컬럼을 
+
+  **a. 그 이름을 position으로 바꾸고**
+
+  **b. 동시에 그 데이터 타입을 CHAR(5)에서 VARCHAR(2)로, 그 속성도 NULL에서 NOT NULL로 바꾸겠습니다.** 
+
+  이렇게 써주면 됩니다. 
+
+  <img src="./resources/2_59.png" alt="2_26"/>
+
+  지금 맨 앞에 CHANGE라고 썼고 그 뒤에는 기존 컬럼의 이름인 role, 그 다음에는 새로운 이름(position)과 새로운 데이터 타입(VARCHAR(2)), 새로운 속성(NOT NULL)을 썼습니다. 실행하고 다시 컬럼 구조를 보면, 
+
+  <img src="./resources/2_60.png" alt="2_26"/>
+
+  role 컬럼이 새로운 데이터 타입과 속성을 가진 position이라는 컬럼으로 바뀐 것을 볼 수 있습니다. 
+
+  이렇게 컬럼의 이름과, 데이터 타입 및 속성을 동시에 바꾸고 싶을 때는 CHANGE 절을 사용하면 편리합니다. 
+
+  **4. 여러 작업 동시에 수행하기**
+
+  ALTER TABLE 문 뒤에는 컬럼에 관한 작업을 하는 절들을 여러 개 두는 것이 가능합니다. 
+
+  아래의 작업들을 동시에 수행해볼게요. 
+
+  **a. id 컬럼의 이름을 registraion_number로 수정**
+
+  **b. name 컬럼의 데이터 타입을 VARCHAR(20)로, 속성을 NOT NULL로 수정**
+
+  **c. position 컬럼을 테이블에서 삭제**
+
+  **d. 새로운 컬럼 2개(height(키), weight(몸무게)) 추가**
+
+  <img src="./resources/2_61.png" alt="2_26"/>
+
+  지금 4가지 작업을 동시에 수행하는 ALTER TABLE 문을 완성했는데요. 각 작업마다 굳이 매번 ALTER TABLE을 써줄 필요 없이 위 이미지처럼 여러 가지 작업을 하나의 ALTER TABLE 문 안에서 한번에 수행하는 것도 가능합니다. 
+
+  이 SQL 문을 실행하면 
+
+  <img src="./resources/2_62.png" alt="2_26"/>
+
+  이렇게 컬럼 구조가 잘 수정된 것을 확인할 수 있습니다. 
+
+  참고로, 위 SQL 문 중에서 a 작업과 b 작업을 하는 절을 CHANGE 절로 아래와 같이 쓸 수도 있습니다. 
+
+  <img src="./resources/2_63.png" alt="2_26"/>
+
+  컬럼의 이름만 바꾸거나, 
+
+  컬럼의 데이터 타입 및 속성만 바꿀 때도 
+
+  이런 식으로 CHANGE 절로 다 처리할 수 있습니다. 
+
+  자, 이때까지 테이블의 컬럼 구조, 컬럼의 이름/데이터 타입/속성들을 변경하는 방법에 대해서 아주 자세하게 배워보았습니다. 이정도만 알고 있어도 앞으로 여러분이 기존 테이블의 구조를 손대야할 때 아무런 어려움 없이 수정할 수 있게될 겁니다. 
