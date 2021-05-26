@@ -335,7 +335,7 @@
 
   만약 각 row마다 시간값에 관한 처리를 다르게 해줘야하는 경우라면 (예를 들어, 어떤 row는 현재 시간에서 +3시간, 어떤 row는 현재 시간에서 -5시간을 해줘야하는 경우) NOW 함수를 쓰는 게 좋을 겁니다.
 
-  하지만 그럴 필요가 없는 상황이고, 굳이 날짜/시간 값을 별도로 신경쓰기가 싫다면 해당 컬럼에 DEFAULT CURRENT_TIMESTAMP 속성, ON UPDATE CURRENT_TIMESTAMP 속성을 설정해서 DBMS가 알아서 관리하도록 하는게 좋겠죠?
+  하지만 그럴 필요가 없는 상황이고, 굳이 날짜/시간 값을 별도로 신경쓰기가 싫다면 해당 컬럼에 `DEFAULT CURRENT_TIMESTAMP` 속성, `ON UPDATE CURRENT_TIMESTAMP` 속성을 설정해서 DBMS가 알아서 관리하도록 하는게 좋겠죠?
 
 
 
@@ -597,3 +597,136 @@
   이런 식으로 CHANGE 절로 다 처리할 수 있습니다. 
 
   자, 이때까지 테이블의 컬럼 구조, 컬럼의 이름/데이터 타입/속성들을 변경하는 방법에 대해서 아주 자세하게 배워보았습니다. 이정도만 알고 있어도 앞으로 여러분이 기존 테이블의 구조를 손대야할 때 아무런 어려움 없이 수정할 수 있게될 겁니다. 
+
+
+
+- #### 테이블 이름 변경, 복사본 만들기, 삭제
+
+  테이블 자체를 다루는 방법 3가지
+
+  위에서 했던 것은 Column을 바꾸는 방법. 
+
+  **1. 테이블 이름 바꾸기**
+
+  ```sql
+  RENAME TABLE student TO undergraduate;
+  ```
+
+  <img src="./resources/2_64.png" alt="2_26"/>
+
+  2. **테이블 복사하기**
+
+  ```sql
+  CREATE TABLE copy_of_undergraduate AS SELECT * from undergraduate; 
+  ```
+
+  <img src="./resources/2_65.png" alt="2_26"/>
+
+  *혹시 기존 테이블에 직접 작업하기 어려울 때는, 똑같은 다른 테이블을 만들어서 실험해보면 좋음.* 
+
+  3. **테이블 삭제하기**
+
+  ```sql
+  DROP TABLE copy_of_undergraduate;
+  ```
+
+  
+
+- #### 테이블 컬럼 구조만 복사하기
+
+  이전에는 테이블 하나를 그대로 복제함. 이번에는 데이터를 제외하고 구조만 복제해 보자. 
+
+  ```sql
+  CREATE TABLE copy_of_undergraduate LIKE undergraduate;
+  ```
+
+  <img src="./resources/2_66.png" alt="2_26"/>
+
+  *LIKE ~와 같은*
+
+   만약 이 상태에서 다시 undergraduate테이블에 있는 Rows를 가져오고 싶다면?
+
+  ```sql
+  INSERT INTO copy_of_undergraduate SELECT * FROM undergraduate;
+  ```
+
+  <img src="./resources/2_67.png" alt="2_26"/>
+
+  **당연하지만, 이렇게 넣을때는 두 컬럼의 구조가 일치해야 함.**
+
+  그런데 이 중에, 특정 조건의 Row만 가져오고 싶다면?
+
+  ```sql
+  INSERT INTO copy_of_undergraduate
+  	SELECT * FROM undergraduate WHERE major=101;
+  ```
+
+  
+
+
+
+- #### INSERT INTO 문과 서브쿼리
+
+  이전 영상에서 배운 SQL 문을 다시 볼게요. 
+
+  <img src="./resources/2_68.png" alt="2_68"/>
+
+  빨간 박스 안의 SELECT 문이 돌려주는 row들을 그대로 copy_of_undergraduate 테이블에 추가해주는 SQL 문인데요. 
+
+  지금 SELECT 문이 전체 SQL 문의 일부분으로 활용되고 있죠? 이렇게 전체 SQL 문에서 하나의 부품처럼 사용되는 SELECT 문을 서브쿼리(Subquery)라고 합니다. 사실 서브쿼리는 토픽 1에서 배웠는데요. 토픽 1을 듣지 않은 분이라면 [이 영상](https://www.codeit.kr/learn/courses/sql-database-for-developers/3231)을 참고하세요.
+
+  토픽 1에서는 SELECT 문 안에 또 SELECT 문이 있는 경우만 봤었는데요. 위 이미지처럼 INSERT INTO 문에서 서브쿼리를 사용하는 것도 가능합니다. 
+
+  서브쿼리는 이런 식으로도 활용할 수 있습니다. 만약 undergraduate 테이블에 학년을 나타내는 grade 컬럼이 있다고 가정하면,
+
+  ```sql
+  INSERT INTO freshman SELECT * FROM undergraduate WHERE grade = 1; #1학년 테이블 
+  INSERT INTO sophomore SELECT * FROM undergraduate WHERE grade = 2; #2학년 테이블 
+  INSERT INTO junior SELECT * FROM undergraduate WHERE grade = 3; #3학년 테이블 
+  INSERT INTO senior SELECT * FROM undergraduate WHERE grade = 4; #4학년 테이블
+  ```
+
+  이런 식으로 학년별 테이블을 새롭게 만들 수도 있습니다. 기존 테이블은 건드리지 않고, 기존 테이블의 특정 row들만으로 새 테이블을 만들어야할 때 사용하면 꽤 유용하겠죠? 
+
+  이런 식으로 SELECT 문이 아닌 다른 종류의 SQL 문에서도 서브쿼리를 사용할 수 있다는 사실을 잘 기억하세요.
+
+
+
+- ####  TRUNCATE으로 데이터 한 번에 날리기
+
+  이전 영상에서는 어떤 테이블과 같은 컬럼 구조를 가진 테이블을 하나 더 생성하는 방법을 배웠습니다. 
+
+  그런데 이런 작업 말고, 기존 테이블의 데이터를 그냥 전부 다 삭제하고, 같은 테이블에서 다시 시작하고 싶을 때가 있을 수 있습니다. 
+
+  이럴 때 물론 DELETE 문을 사용해도 되지만 다른 방법도 있습니다. 바로 **TRUNCATE** 문이라는 걸 쓰면 되는데요. 
+
+  현재 한 초등학교 반의 기말고사 성적을 나타내는 **final_exam_result** 테이블이 있다고 합시다. 
+
+  <img src="./resources/2_69.png" alt="2_68"/>
+
+  만약 이 테이블의 모든 row들을 삭제해버리고 싶다면 
+
+  ```sql
+  DELETE FROM final_exam_result; 
+  ```
+
+  라고 쓰고 실행해도 되지만 
+
+  이렇게 써도 됩니다. 
+
+  <img src="./resources/2_70.png" alt="2_68"/>
+
+  이 SQL 문을 실행하고
+
+  <img src="./resources/2_71.png" alt="2_68"/>
+
+  다시 테이블을 조회해보면, **테이블의 뼈대는 그대로 남아있지만 모든 row들이 삭제된 것을 알 수 있습니다.** 
+
+  이렇게 테이블의 모든 row를 삭제해야할 때는 `TRUNCATE` 문을 쓸 수도 있다는 점을 기억하세요. 
+
+  (`DELETE FROM final_exam_result;` 와 `TRUNCATE final_exam_result;` 는 그 실행 결과는 같지만 내부적으로 이루어지는 동작은 차이가 있습니다. 지금 단계에서 중요한 내용은 아니니 일단 둘을 혼용해서 쓸 수 있다는 사실을 기억하세요) 
+
+
+
+
+
