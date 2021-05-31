@@ -19,7 +19,10 @@ with open('./resource/review.txt', 'r') as f:
   print(c)
   print(list(c))
   print(iter(c))
-
+  print("iter_test")
+  # for i in iter(c):
+  #   print(i)
+  print("iter_test")
 
 print("--------------------------")
 print("--------------------------")
@@ -63,7 +66,7 @@ print("--------------------------")
 #example 6
 with open('./resource/review.txt', 'r') as f:
   contents = f.readlines()
-  print(contents)
+  print(contents) # list 로 주네
 
 
 print("--------------------------")
@@ -89,7 +92,7 @@ with open('./resource/score.txt', 'r') as f:
     print(line)
     score.append(int(line))
   print(score)
-print('Average : {:6.3}'.format(sum(score)/len(score)))
+print('Average : {0:6.3f}'.format(sum(score)/len(score)))
 
 
 #Writing

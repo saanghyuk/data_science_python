@@ -124,7 +124,7 @@ print(var_function(10))
 lambda_mul_10 = lambda num : num*10 #num이라는 input을 받아서, x*10이라는 아웃풋을 뱉어
 print('lambda >>>>>>', lambda_mul_10(10))
 
-def func_final(x, y, func):ㄴ
+def func_final(x, y, func):
   print(x*y*func(10))
 
 func_final(10, 10, lambda_mul_10)

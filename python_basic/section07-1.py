@@ -50,7 +50,7 @@ self_test = SelfTest()
 # self가 들어있어야 현재 객체의 함수라는 것을 알려주는 건데, 셀프가 없으면 몰라
 #근데 몰라도 뭐 클래스로 직접 접근하면 호출은 되지
 SelfTest.function1()
-print("selfTest.functiono1()")
+print("selfTest.function1()")
 # self_test.function1()
 # 반대로 인스턴스 객체는 클래스 함수 호출을 못하나봐
 # SelfTest.function2() #이건 Instance Method라서 여기서 호출이 안됨.

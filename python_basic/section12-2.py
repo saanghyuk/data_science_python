@@ -12,53 +12,54 @@ c = conn.cursor()
 #read
 c.execute("SELECT * FROM users")
 
-#cursor 위치 변경
-#1개 로우 선택
+# cursor 위치 변경
+# # 1개 로우 선택
+# print("=========fetchone=============")
 # print('One -> \n', c.fetchone())
-
+#
 # print('Three -> \n', c.fetchmany(size = 3 ))
-
-# #전체 로우 선택
+#
+# #전체 로우 선택ㄲㄲ
 # print('All -> \n', c.fetchall()) #next all
-
-# print()
+#
+# # print()
 
 
 #순회
 #case 1
-# rows = c.fetchall()
-# for row in rows:
-#   print('retrieve1 -> ', row)
+rows = c.fetchall()
+for row in rows:
+  print('retrieve1 -> ', row)
 
 #case 2
-# for row in c.fetchall():
-#   print('retrieve2 -> ', row)
+for row in c.fetchall():
+  print('retrieve2 -> ', row)
 
-#case 3
-# for row in c.execute('SELECT * FROM users ORDER BY id desc'):
-#     print('retrieve3 -> ', row)
+# case 3
+for row in c.execute('SELECT * FROM users ORDER BY id desc'):
+    print('retrieve3 -> ', row)
 
 
 
 
 #WHERE Retrieve1
-# param1 = (3,)
-# c.execute('SELECT * FROM users WHERE id=?', param1)
-# print('param1', c.fetchone())
-# print('param1', c.fetchall()) #하나만 뽑아온 상태라서 이후 커서에서 다 가져올 애가 없음.
+param1 = (3,)
+c.execute('SELECT * FROM users WHERE id=?', param1)
+print('param1', c.fetchone())
+print('param1', c.fetchall()) #하나만 뽑아온 상태라서 이후 커서에서 다 가져올 애가 없음.
 
 
 #WHERE Retrieve 2
-# param2 = 4
-# c.execute('SELECT * FROM users WHERE id="%s"' % param2)
-# print('param2', c.fetchone())
-# print('param2', c.fetchall()) #하나만 뽑아온 상태라서 이후 커서에서 다 가져올 애가 없음.
+param2 = 4
+c.execute('SELECT * FROM users WHERE id="%s"' % param2)
+print('param2', c.fetchone())
+print('param2', c.fetchall()) #하나만 뽑아온 상태라서 이후 커서에서 다 가져올 애가 없음.
 
 
 #WHERE Retrieve 3
-# c.execute('SELECT * FROM users WHERE id=:Id', {"Id": 5})
-# print('param3', c.fetchone())
-# print('param3', c.fetchall()) #하나만 뽑아온 상태라서 이후 커서에서 다 가져올 애가 없음.
+c.execute('SELECT * FROM users WHERE id=:Id', {"Id": 5})
+print('param3', c.fetchone())
+print('param3', c.fetchall()) #하나만 뽑아온 상태라서 이후 커서에서 다 가져올 애가 없음.
 
 #WHERE Retrieve 4
 # param4 = (3, 5)
@@ -78,7 +79,9 @@ print('param6', c.fetchall())
 #Dump 출력. 데이터베이스 백업
 with conn:
   with open('./resource/dump.sql', 'w') as f:
+    print(conn.iterdump())
     for line in conn.iterdump():
+      print(line)
       f.write('%s\n' %line)
 
     print('Dump Print Complete')

@@ -11,8 +11,8 @@ nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
 print('nowDatetime : ', nowDatetime)
 
 #sqlliste3 version
-print('sqlite3.version : ', sqlite3.version )
-print('sqlite3.sqlite_version : ', sqlite3.sqlite_version )
+print('sqlite3.version : ', sqlite3.version)
+print('sqlite3.sqlite_version : ', sqlite3.sqlite_version)
 
 
 #DB생성 & Auto Commit(Rollback)
