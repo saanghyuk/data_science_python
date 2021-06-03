@@ -124,9 +124,6 @@ def main(separate_many):
 if __name__ == '__main__':
     main(separate_many)
 
-    # 지금 보면 3만건의 데이터를 7번을 읽고 쓰고 한거야.
-    # 국가마다 읽고 쓰고를 IO작업을 하는 것.
-    # 읽고 쓰는거는 운영체제가 관여를 함.
 
 
 # 18.44s

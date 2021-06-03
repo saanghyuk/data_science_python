@@ -212,8 +212,7 @@ i2 = IterTestB() # TypeError: Can't instantiate abstract class IterTestB with ab
 print('EX4-5 -', i2[4])
 print('EX4-6 -', i2[4:10]) # [idx] 제거 후
 print('EX4-7 -', 3 in i2[1:10]) # contain을 파이썬이 알아서 만든 것.
-
-print()
+# print(i2.count(i2))
 print()
 
 # 우리가 직접 abc를 만들어 보자.

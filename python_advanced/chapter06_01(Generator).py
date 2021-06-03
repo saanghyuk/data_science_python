@@ -17,6 +17,8 @@
 
 
 
+# https://kkamikoon.tistory.com/91
+
 t = 'ABCDEF'
 # for
 for c in t:
@@ -108,6 +110,7 @@ for j in i:
 # 3. 배열이나, 딕셔너리, 리스트 등은 한번 호출할 때 마다 하나의 값만 리턴해 줌. -> 아주 작은 메모리 양을 필요로 함.
 # 즉, 리스트 안에 천만개 있어? 그거 하나의 리스트에 담는게 너무 메모리가 많이 들어가. 제네레이터는 만들면서 하나씩만 가져오고, 다음에 가져올 위치만 기억하잖아.
 
+# https://wikidocs.net/16069
 
 class WordSplitGenerator:
   def __init__(self, text):

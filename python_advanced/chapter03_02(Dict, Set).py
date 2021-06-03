@@ -33,7 +33,7 @@ with open('./resources/test1.csv', 'r', encoding='UTF-8') as f:
   #변환
   NA_CODES = [tuple(x) for x in temp]
 
-# print(NA_CODES)
+print(NA_CODES)
 
 n_code1 = {country: code for country, code in NA_CODES}
 n_code2 = {country.upper(): code for country, code in NA_CODES}

@@ -5,6 +5,8 @@
 
 # 파이썬 변수 범위(global)
 
+#https://youtu.be/kuPyMik4XIE 영상 보면 클로저/데코레이터 끝
+
 #예제 1
 def func_v1(a):
   print(a)
@@ -119,7 +121,7 @@ print('EX5-4 - ', dir(avg_closure1.__closure__[0].cell_contents))
 print()
 print()
 
-# closuere 잘못 사용한 경우 벌어지는 일들.
+# closure 잘못 사용한 경우 벌어지는 일들.
 def closure_avg2():
   #Free Variable
   cnt = 0
@@ -144,7 +146,7 @@ print('EX5-5 - ', avg_closure2(15))
 print('EX5-6 - ', avg_closure2(15))
 print('EX5-7 - ', avg_closure2(15))
 
-# func.__closure__ 형태로 자유 변수에 해당하는 객체들을 확인할 수 있고,
+# func.__closure__ 형태로 자유 변 수에 해당하는 객체들을 확인할 수 있고,
 # func.__code__.co_freevars 를 통해 자유 변수들의 이름을 확인할 수 있다.
 
 
@@ -183,6 +185,7 @@ def perf_clock(func):
 @perf_clock
 def time_func(seconds):
   time.sleep(seconds)
+
 @perf_clock
 def sum_func(*numbers):
   return sum(numbers)
