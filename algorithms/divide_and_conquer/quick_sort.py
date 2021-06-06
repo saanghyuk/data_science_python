@@ -32,6 +32,7 @@ def quicksort(my_list, start=0, end=None):
     # base case
     if end==None:
         end = len(my_list)-1
+
     if end - start < 1:
         return
 
