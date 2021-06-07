@@ -48,3 +48,124 @@ Dynamic Programming을 사용하기 위해서는 필요한 조건이 두가지�
 
   ![5_1](./resources/5_9.png)
 
+  
+
+- #### Dynamic Programming
+
+  ![5_1](./resources/5_10.png)
+
+  이렇게 중복부분문제들이 있는 경우 똑같은 부분문제들을 여러번 풀어야 되는 비효율이 발생함. 이런 비효율을 해결하는 알고리즘이 바로 **Dynamic Programming**임. 
+
+  즉 어떤 문제를 봤을 때, 최적부분구조가 있고 중복되는 부분문제들이 있으면 Dynamic Programming으로 문제를 해결하면 된다. 
+
+  ![5_1](./resources/5_11.png)
+
+  **Dynamic Programming은 별게 아님. 그냥 한번 계산한 결과를 버리지 않고 재활용하는 방식.**
+
+   ![5_1](./resources/5_12.png)
+
+  피보나치 수열 문제로 예를 들자면, 중복되는 문제를 딱 한번씩만 풀자는 것. 
+
+  ![5_1](./resources/5_13.png)
+
+  Dynamic Programming을 구현하는 방식은 두가지로 나뉨. 첫번째는 **Memoization**, 두번째는 **Tabulation**임. 
+
+  ![5_1](./resources/5_14.png)
+
+
+
+- #### Memoization
+
+  까페 알바를 하는데 아래 3가지를 동시에 시키는 경우가 엄청 많다고 해보자. 
+
+  ![5_1](./resources/5_16.png)
+
+  그래서 이 3개의 합을 그냥 계산대 옆에 메모로 붙여 놔. 
+
+  중복되는 계산은 한번만 계산해서 메모해두고 그 다음부터는 그 메모를 참고만 하면 됨. 
+
+  이런 방식을 **Memoization**이라고 부름. 
+
+  ![5_1](./resources/5_17.png)
+
+  시작하면서 옆에 파이썬 사전을 만들어 놓고, 한번 계산한 값은 옆에 모두 저장해 놓자. 이렇게 다시 쓸 값들을 저장해 놓는 공간을 **cache**라고 부른다. 
+
+  우리는 각 부분문제를 딱 한번만 풀고, 두번째 나오면서 부터는 다 cache에서 가져다 썼음. 
+
+  ![5_1](./resources/5_18.png)
+
+  
+
+- #### Tabulation
+
+  중복되는 부분문제를 사용하기 위해서, **Dynamic Programming**을 배워봤음. 그 중 **Memoization**을 먼저 함. 두번째는 중복되는 것 부터 푸는 **Tabulation**. ![5_1](./resources/5_19.png)
+
+  **Memoization같은 경우는 하향식 접근임.** Fib(6)을 구하기 위해서, fib(5), fib(4)를 구해야 하고, fib(4)를 구하려고 fib(4), fib(3)을 구해야 하고 이런식으로 흘러갔음. ![5_1](./resources/5_20.png) 
+
+  이번에는 반대로 **상향식 접근**. 
+
+  ![5_1](./resources/5_21.png)
+
+  이렇게 하면 중복되는 계산이 없음. 
+
+  ![5_1](./resources/5_22.png)
+
+  이렇게 표를 채워가는 느낌임. 표가 영어로 table이라서, 이름이 **tabulation**인 것. 
+
+  ![5_1](./resources/5_23.png)
+
+  ![5_1](./resources/5_24.png)
+
+
+
+- #### Memoization VS Tabulation
+
+  둘 중 하나의 방법만 써야 한다면 뭘 써야 할까?
+
+  공통점은 둘다 중복되는 계산의 비효율을 없애준다는 것. 
+
+  ![5_1](./resources/5_25.png)
+
+  가장 핵심적인 차이점이 있다면, Memoization은 일반적으로 재귀함수를 사용하고, Tabulation은 반복문을 사용한다는 것. 
+
+  ![5_1](./resources/5_26.png)
+
+  Memoization을 사용하면 stack에 너무 많이 쌓일 수 있음. 결국엔 과부하가 걸려서 오류가 날 수 있음 
+
+  ![5_1](./resources/5_27.png)
+
+  반면 tabulation을 사용하면 반복문을 사용하기 때문에 그럴 위험은 없음. 
+
+  그렇다면, **Memoization의 장점은**?
+
+  Tabulation은 표를 하나씩 채우면서 올라가는 것이기 때문에 n번째 값을 구하기 위해 표를 모두 채워가면서 계산함. 그래서 어쩌면, *중간에 필요 없는 것들까지도 계산할 수 있음*.
+
+  ![5_1](./resources/5_28.png) 
+
+  그러나 Memoization은 위에서부터 필요한 계산만 딱딱 요구를 하는 개념임. 필요없는 계산은 안해도 된다는 장점이 있음. 
+
+  ![5_1](./resources/5_29.png)
+
+
+
+- #### Dynamic Programming 공간 최적화
+
+  ![5_1](./resources/5_30.png)
+
+  그런데 아직도 비효율이 조금 있음. 예를 들어, fib(5)를 계산하기 fib(4)아 fib(3)만 알면 됨. 마찬가지로 fib(20)을 계산하기 위해서는 fib(19)와 fib(18)만 알면 됨. 하지만, **우리는 현재까지 계산한 모든 피보나치 값들을 fib_table에 저장하고 있음**. 
+
+  ![5_1](./resources/5_31.png)
+
+  이걸 더 효율적으로 하려면, 리스트 대신 가장 최근값들을 저장하는 변수 두개만 사용하면 됨. 
+
+  아래의 두 값을 가지고 update해가면 끝이지. 
+
+  ![5_1](./resources/5_32.png)
+
+  ![5_1](./resources/5_33.png)
+
+  이런식으로 계속 current = previous+current, previous = current 해나가면 원하는 피보나치 값을 찾아갈 수 있겠지. 
+
+  ![5_1](./resources/5_34.png)
+
+  ![5_1](./resources/5_35.png)
