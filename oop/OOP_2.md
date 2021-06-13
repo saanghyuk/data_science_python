@@ -180,7 +180,202 @@
 
   *type hinting한 다음에 다른것을 넣으면 실행 자체는 문제가 없는데, ide들에서는 경고창이 뜨긴 함.* 왠만하면 Type hinting 해주자. 
 
-   
-
   
 
+## 캡슐화
+
+- #### 캡슐화의 필요성
+
+  Citizen Class를 예로 들어 설명한다. 
+
+  ![2_1](./resources/2_16.png)
+
+  *여기서 문제는, 아래처럼 치면, 주민등록번호가 그대로 유출되버림.* 
+
+  그리고 그 아랫줄 보면, age도 마음대로 설정할 수 있음. 여기서는 -12로 설정해버림. 
+
+  그리고, young 지금 어린이 하고 있는데 20살로 음주 가능 나이로 만들어버렸음. 
+
+  ![2_1](./resources/2_17.png)
+
+  이런문제를 해결하면, Citizen Class에 캡슐화를 적용해야 함. 
+
+  ![2_1](./resources/2_18.png)
+
+
+
+- #### 객체 내부를 숨기는 법
+
+  첫번째 정의부터 보자면, 클래스 외부에서 클래스 내부의 변수 등으로 직접접근하는 것을 막는다는 뜻. 
+
+  ![2_1](./resources/2_19.png)
+
+  기존 코드
+
+  ```python
+  
+  class Citizen:
+      drinking_age = 19
+  
+      def __init__(self, name, age, resident_id):
+          self.name = name
+          self.age = age
+          self.resident_id = resident_id
+  
+      def authenticate(self, id_field):
+          return self.resident_id == id_field
+  
+      def can_drink(self):
+          return self.age >= Citizen.drinking_age
+  
+      def __str__(self):
+          return self.name + "씨는" + str(self.age) + "살 입니다"
+  ```
+
+  이제 여기서 변수 앞에 언더바 두개를 붙여보자. age, resident_id 두개에 앞에 언더바를 붙였음. 
+
+  ```python
+  
+  class Citizen:
+      drinking_age = 19
+  
+      def __init__(self, name, age, resident_id):
+          self.name = name
+          self.__age = age
+          self.__resident_id = resident_id
+  
+      def authenticate(self, id_field):
+          return self.resident_id == id_field
+  
+      def can_drink(self):
+          return self.__age >= Citizen.drinking_age
+  
+      def __str__(self):
+          return self.name + "씨는" + str(self.__age) + "살 입니다"
+  
+  
+  ```
+
+  이제 이 두 변수는 시티즌 클래스 밖에서 접근할 수 없음. 해당 변수를 가지고 있지 않다고 말함. 
+
+  ```python
+  sanghyuk = Citizen("손상혁", '29', '123456')
+  print(sanghyuk.__resident_id)
+  print(sanghyuk.__age)
+  ```
+
+  ![2_1](./resources/2_20.png)
+
+  이번에는 method앞에 붙여보자. 
+
+  ```python
+      def __authenticate(self, id_field):
+          return self.resident_id == id_field
+  ```
+
+  그리고, 이번에 authenticate도 클래스 밖에서 호출이 안됨. 
+
+  ![2_1](./resources/2_21.png)
+
+  **어쨋든 변수나 메소드 앞에 언더바 두개를 붙이면 클래스 외부에서 정의가 불가능해짐.**
+
+   
+
+- #### 밑줄 두 개와 특수 메소드
+
+  이전 영상에서 혹시 이상한 점을 느끼셨나요? 변수 `age`, `resident_id`나 메소드 `authenticate` 의 이름 앞에 밑줄 두 개(`__`)를 추가하니 클래스 외부에서 접근할 수 없었습니다. 그런데 비슷한 모양의 `__init__` 메소드와 `__str__` 메소드는 잘 사용할 수 있습니다. 코드로 살펴봅시다.
+
+  ```python
+  class Citizen:
+      """주민 클래스"""
+      drinking_age = 19 # 음주 가능 나이
+  
+      def __init__(self, name, age, resident_id):
+          """이름, 나이, 주민등록번호"""
+          self.name = name
+          self.__age = age
+          self.__resident_id = resident_id
+  
+      def authenticate(self, id_field):
+          """본인이 맞는지 확인하는 메소드"""
+          return self.__resident_id == id_field
+  
+      def can_drink(self):
+          """음주 가능 나이인지 확인하는 메소드"""
+          return self.__age >= Citizen.drinking_age
+  
+      def __str__(self):
+          """주민 정보를 문자열로 리턴하는 메소드"""
+          return self.name + "씨는 " + str(self.__age) + "살입니다!"
+  
+  
+  # 주민 인스턴스 생성
+  young = Citizen("younghoon kang", 18, "87654321")
+  
+  print(young.__str__()) # 출력: younghoon kang씨는 18살입니다!
+  print(young.__authenticate("87654321")) # 에러가 난다!!!
+  ```
+
+  이 코드 마지막 부분에서 `__str__` 메소드는 잘 실행되지만, `__authenticate` 메소드는 에러가 납니다. 무슨 차이가 있는 걸까요?
+
+  **파이썬에서는 변수나 메소드 이름 앞에 밑줄 2개(`__`)가 있더라도 이름 뒤에도 밑줄 2개(`__`)가 있으면 일반 변수나 메소드처럼 클래스 밖에서도 접근할 수 있습니다.** 메소드 이름 앞 뒤에 밑줄 2개가 있으면 파이썬이 정한 특수한 상황에서 자동으로 실행되는 "특수 메소드"를 나타낸다고 배웠습니다. 이렇게 특수 메소드를 나타내기 위한 표식인데 앞에 밑줄 2개(`__`)가 있다는 이유로 접근할 수 없다면 문제가 되겠죠?
+
+  정리하자면
+
+  1. `__str__` 메소드는 이름 **앞 뒤에 모두** 밑줄 2개(`__`)가 있기 때문에 일반 메소드와 동일하게 사용할 수 있고,
+  2. 인스턴스 변수 `__resident_id`는 **앞에만** 밑줄 2개(`__`)가 있어서 외부에서 접근할 수 없는 겁니다. `__resident_id__`로 바꿔주면 일반 변수처럼 사용할 수 있습니다.
+
+  ```python
+  class Citizen:
+      """주민 클래스"""
+      drinking_age = 19 # 음주 가능 나이
+  
+      def __init__(self, name, age, resident_id):
+          """이름, 나이, 주민등록번호"""
+          self.name = name
+          self.__age = age
+          self.__resident_id__ = resident_id
+  
+      def authenticate(self, id_field):
+          """본인이 맞는지 확인하는 메소드"""
+          return self.__resident_id__ == id_field
+  
+      def can_drink(self):
+          """음주 가능 나이인지 확인하는 메소드"""
+          return self.__age >= Citizen.drinking_age
+  
+      def __str__(self):
+          """주민 정보를 문자열로 리턴하는 메소드"""
+          return self.name + "씨는 " + str(self.__age) + "살입니다!"
+  
+  # 주민 인스턴스 생성
+  young = Citizen("younghoon kang", 18, "87654321")
+  
+  print(young.__str__()) # 출력: younghoon kang씨는 18살입니다!
+  print(young.__resident_id__)) # 출력: "87654321"
+  print(young.__authenticate("87654321")) # 에러가 난다!!!
+  ```
+
+  앞으로 클래스에서 숨기고 싶은 변수나 메소드는 이름의 앞에만 밑줄 2개(`__`)를 붙여야겠죠?
+
+
+
+- #### 객체의 메소드를 통해 변수 접근하기1
+
+  클래스 밖에서 값을 읽을 수도, 쓸 수도 없음. 그럼 어떻게 사용해야 할까?
+
+  ![2_1](./resources/2_22.png)
+
+  클래스 밖에서 값을 읽을 수도, 쓸 수도 없음. 그럼 어떻게 사용해야 할까?
+
+  ![2_1](./resources/2_23.png)
+
+  그래서 변수를 무조건 숨기기만 하면 안되지. 
+
+  **그 해결책은 바로, 변수에 접근할 수 있는 메소드를 따로 만드는 것.**
+
+  잘 보면, 여기에 힌트가 있음. can_drink메소드는 __를 사용하고 있음. 
+
+  ![2_1](./resources/2_24.png)
+
+  
