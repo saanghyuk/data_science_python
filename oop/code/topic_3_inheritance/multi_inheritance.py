@@ -17,7 +17,7 @@ class EngineerTennis(Engineer, TennisPlayer):
     def __init__(self, favorite_language, tennis_level):
         Engineer.__init__(self, favorite_language)
         TennisPlayer.__init__(self, tennis_level)
-    
+
 
 
 # 다중 상속을 받는 클래스의 인스턴스 생성
