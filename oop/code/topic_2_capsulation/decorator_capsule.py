@@ -3,7 +3,7 @@ class Citizen:
     drinking_age = 19
     def __init__(self, name, age, resident_id):
         self.name = name
-        self._age
+        self._age = age
         self.resident_id = resident_id
 
     def authenticate(self, id_field):
