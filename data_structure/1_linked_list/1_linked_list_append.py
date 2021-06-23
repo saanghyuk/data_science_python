@@ -52,7 +52,6 @@ class LinkedList:
             # 각 노드의 데이터를 리턴하는 문자열에 더해준다
             res_str += f" {iterator.data} |"
             iterator = iterator.next  # 다음 노드로 넘어간다
-
         return res_str
 
 # 새로운 링크드 리스트 생성
