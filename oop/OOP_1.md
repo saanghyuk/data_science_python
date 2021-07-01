@@ -670,7 +670,7 @@
 
   ![1_1](./resources/1_39.png)
 
-  class method는 @classmethod 데코레이터를 써서 파이썬에게 이게 클래스 메소드임을 알려준다. 
+  class method는 `@classmethod` 데코레이터를 써서 파이썬에게 이게 클래스 메소드임을 알려준다. 
 
   다른 뭔가 기능을 추가한거겠지. 
 
