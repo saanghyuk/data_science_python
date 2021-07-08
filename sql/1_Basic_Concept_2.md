@@ -280,12 +280,10 @@
   SELECT email, sign_up_day, DATE_ADD(sign_up_day, INTERVAL 300 DAY) FROM copang_main.member;
   ```
 
-  
-
   ```sql
   SELECT email, sign_up_day, DATE_SUB(sign_up_day, INTERVAL 300 DAY) FROM copang_main.member;
   ```
-
+  
   날짜에서 며칠을 더하고 빼는 것도 가능한데요. 더하는 함수는 **DATE_ADD()**, 빼는 함수는 **DATE_SUB()**입니다. 
 
   예를 들어, 가입일(sign_up_day) 기준으로 300일 이후의 날짜를 구하려면 이렇게 쓰면 됩니다. 
@@ -311,7 +309,7 @@
   ```sql
   SELECT email, sign_up_day,UNIX_TIMESTAMP(sign_up_day) FROM copang_main.member;
   ```
-
+  
   ![1_83](./resources/1_104.png)
 
   UNIX_TIMESTAMP라는 함수를 쓰면 되는데요. 지금 빨간 박스 안에 상당히 큰 숫자값들이 보입니다. 이 값들은 모두 각 날짜가 1970년 1월 1일을 기준으로 몇 초가 지난 것인지를 나타냅니다. 실무에서 여러분은 깔끔한 형식의 날짜 또는 시간뿐만 아니라 이런 Unix Timestamp를 보게될 수도 있습니다.
@@ -323,7 +321,7 @@
   ```sql
   SELECT email, sign_up_day,FROM_UNIXTIME(UNIX_TIMESTAMP(sign_up_day)) FROM copang_main.member;
   ```
-
+  
   ![1_83](./resources/1_105.png)
 
   Unix timestamp를 다시 집어넣었더니 원래 날짜가 그대로 잘 나왔습니다. 대신 이번엔 시간 정보도 포함해서(00:00:00) 출력되었네요. 
@@ -777,9 +775,11 @@
 
   ...
 
+  1993-12-21
+
   만약 우리가 보는 내용이 어떤 테이블에 담겨있다고 한다면 이런 식의 SQL 문이 실행되겠죠?
 
   (*이는 설명을 위한 가정일 뿐이고, 개발 실무에서는 효율적인 Pagination을 구현하기 위해 훨씬 다양한 기법들이 추가됩니다) 
-
+  
   이런 Pagination은 개발자들에게도 중요한 주제라는 사실을 알고 계시면 좋습니다. 대신 실제 서비스에 구현된 Pagination은 위 예시처럼 간단하지만은 않습니다. 실제 서비스에서는 저장된 row 수가 너무나도 많기 때문에 각 페이지당 내용을 최대한 빠르게 로드하기 위한 추가적인 기법들이 필요한데요. 이 부분까지는 다루지 않겠습니다. 다만, 우리가 늘 사용하던 인터페이스에 이런 근본적인 원리가 숨어있었다는 사실만큼은 꼭 기억하세요! 
 
