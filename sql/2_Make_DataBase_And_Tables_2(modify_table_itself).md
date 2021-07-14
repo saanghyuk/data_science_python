@@ -76,7 +76,7 @@
   
     ```sql
     ALTER TABLE student
-    	MODIFY major INT; 
+    	MODIFY major INT;
     ```
   
     그대로 하면 에러가 남. 왜 그럴까? 원래 있던 값들이 문자열이잖아. 이 상태에서는 당연히 에러가 나겠지. 
