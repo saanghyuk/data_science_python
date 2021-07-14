@@ -187,11 +187,15 @@
 
   지금 height IS NOT NULL이 True인 경우, 그러니까 height 컬럼에 값이 있는 경우에는 그 값이 그대로 출력되고, False인 경우 그러니까 height 컬럼이 NULL인 경우는 'N/A'이 출력되는 겁니다.
 
+  Error Code: 1064. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FROM miyoung.member' at line 5
+
   **4. CASE 함수** 
 
   CASE 함수는 이전에 배웠는데요. 아래 SQL 문처럼 CASE 함수로도 NULL을 적절한 값으로 변환해서 나타낼 수 있습니다. 아래 그림은 따로 설명하지 않아도 되겠죠?
 
   ![1_135](./resources/1_160.png)
+
+  
 
 - #### NULL에 관해 알아야 하는 사실들
 
@@ -367,6 +371,8 @@
 
 
 - #### 칼럼 변환해서 보기
+
+  
 
   ![1_135](./resources/1_152.png)
 
@@ -651,7 +657,9 @@
 
   사실 이 m과 f안에 모든 Row가 들어있는 것. 
 
-  ![1_135](./resources/1_179.png)
+  ![
+
+  GROUP BY를 쓸 때, 지켜야 하는 규칙](./resources/1_179.png)
 
   겉으로 볼때는 평범해 보이지만, 각각의 row는 각각 하나의 그룹을 나타내는 것. 
 
@@ -982,7 +990,7 @@
 
   ![1_192](./resources/1_193.png)
 
-  새로 생긴 row는 gender는 고려하지 않고, region만을 고려하는 COUNT값을 보여주고 있음. 
+  새로 생긴 row는 gender는 고려하지 않고, region만을 고려하는 COUNT값을 보여주고 있음(null 컬럼이 두개 합친 결과). 
 
   즉 얘네들은 일종의 부분총계를 담고 있음. 이게 **WITH ROLLUP**의 기능. 
 
