@@ -143,7 +143,7 @@
 
   ```sql
   SELECT 
-  	COALESCE(height, '####'),
+  	COALESCE(height, '####'), 
       COALESCE(weight, '----'),
       COALESCE(height, '@@@')
   FROM copang_main.member ;
@@ -1192,3 +1192,4 @@ ORDER BY region ASC, gender DESC;
 
 #### 
 
+i

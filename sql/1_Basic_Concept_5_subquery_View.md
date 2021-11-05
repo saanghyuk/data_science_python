@@ -142,8 +142,8 @@
   SELECT 
   	id, 
   	name, 
-      price,
-      (SELECT AVG(price) FROM item) AS 'AVERAGE PRICE'
+    price,
+    (SELECT AVG(price) FROM item) AS 'AVERAGE PRICE'
   FROM copang_main.item
   WHERE price > (SELECT AVG(price) FROM item);
   ```
@@ -363,7 +363,7 @@
 
   지금 ()안 처럼 서브쿼리로 탄생한 테이블을 **derived table**이라고 부름. 
 
-  이런 Derived테이블 자체에 반드시 alias가 붙어 있어야 함. 
+  이런 **Derived테이블 자체에 반드시 alias가 붙어 있어야 함.** 
 
   *아래처럼*
 
